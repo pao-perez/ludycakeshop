@@ -79,9 +79,10 @@ namespace LudyCakeShop.TechnicalServices
                     for (int index = 0; index < dataReader.FieldCount; index++)
                     {
                         PropertyInfo storedProp = props[index];
-                        if (storedProp != null)
+                        var val = dataReader[index];
+                        if (storedProp != null && val != DBNull.Value)
                         {
-                            storedProp.SetValue(obj, dataReader[index]);
+                            storedProp.SetValue(obj, val);
                         }
                     }
                 }
@@ -111,18 +112,18 @@ namespace LudyCakeShop.TechnicalServices
             {
                 PropertyInfo prop = null;
                 List<PropertyInfo> props = new List<PropertyInfo>();
-                for (int Index = 0; Index < dataReader.FieldCount; Index++)
+                for (int index = 0; index < dataReader.FieldCount; index++)
                 {
-                    prop = classType.GetProperty(dataReader.GetName(Index));
+                    prop = classType.GetProperty(dataReader.GetName(index));
                     props.Add(prop);
                 }
                 while (dataReader.Read())
                 {
                     T obj = (T)Activator.CreateInstance(null, classType.FullName).Unwrap();
-                    for (int Index = 0; Index < dataReader.FieldCount; Index++)
+                    for (int index = 0; index < dataReader.FieldCount; index++)
                     {
-                        PropertyInfo storedProp = props[Index];
-                        var val = dataReader[Index];
+                        PropertyInfo storedProp = props[index];
+                        var val = dataReader[index];
                         if (storedProp != null && val != DBNull.Value)
                         {
                             storedProp.SetValue(obj, val);
@@ -149,22 +150,6 @@ namespace LudyCakeShop.TechnicalServices
             {
                 command.Parameters.Add(sqlParameter);
             }
-
-            success = command.ExecuteNonQuery() > 0;
-
-            _sqlDatasourceConnection.Close();
-
-            return success;
-        }
-
-        public bool Delete(string storedProcedure, SqlParameter sqlParameter)
-        {
-            bool success = false;
-            _sqlDatasourceConnection.Open();
-
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
-
-            command.Parameters.Add(sqlParameter);
 
             success = command.ExecuteNonQuery() > 0;
 
