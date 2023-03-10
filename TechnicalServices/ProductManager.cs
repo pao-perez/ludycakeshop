@@ -11,11 +11,11 @@ namespace LudyCakeShop.TechnicalServices
     {
         public IEnumerable<Product> GetProducts()
         {
-            SQLManager sQLManager = new();
+            SQLManager sqlManager = new();
 
             List<SqlParameter> SqlParameters = new();
 
-            return sQLManager.SelectAll<Product>("GetProducts", SqlParameters, typeof(Product));
+            return sqlManager.SelectAll<Product>("GetProducts", SqlParameters, typeof(Product));
         }
     }
 }
