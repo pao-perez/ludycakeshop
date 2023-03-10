@@ -32,6 +32,7 @@ namespace LudyCakeShop
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LudyCakeShop", Version = "v1" });
             });
+            services.AddControllers().AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
