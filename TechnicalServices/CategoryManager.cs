@@ -13,9 +13,9 @@ namespace LudyCakeShop.TechnicalServices
         {
             SQLManager datasourceManager = new();
 
-            List<SqlParameter> SqlParameters = new();
+            List<SqlParameter> sqlParameters = new();
 
-            return datasourceManager.SelectAll<Category>("GetCategories", SqlParameters, typeof(Category));
+            return datasourceManager.SelectAll<Category>("GetCategories", sqlParameters, typeof(Category));
         }
     }
 }

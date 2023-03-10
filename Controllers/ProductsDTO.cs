@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LudyCakeShop.Controllers
 {
-    public class CategoryWithProductsDTO
+    public class ProductsDTO
     {
         public int _id { get; set; }
         public string name { get; set; }

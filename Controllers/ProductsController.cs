@@ -12,26 +12,24 @@ namespace LudyCakeShop.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Produces("application/json")]
-    public class CategoriesController : ControllerBase
+    public class ProductsController : ControllerBase
     {
-        private readonly ILogger<CategoriesController> _logger;
         private readonly LCS _requestDirector;
 
-        public CategoriesController(ILogger<CategoriesController> logger)
+        public ProductsController()
         {
-            _logger = logger;
             _requestDirector = new();
         }
 
         [HttpGet]
+        [Produces("application/json")]
         public IActionResult Get()
         {
             // TODO: create Custom object binder
-            List<CategoryWithProductsDTO> result = new List<CategoryWithProductsDTO>();
+            List<ProductsDTO> result = new List<ProductsDTO>();
             foreach (var kp in _requestDirector.GetProductsByCategories())
             {
-                CategoryWithProductsDTO val = new CategoryWithProductsDTO();
+                ProductsDTO val = new ProductsDTO();
                 val._id = kp.Key.CategoryID;
                 val.name = kp.Key.CategoryName;
                 val.products = kp.Value;
