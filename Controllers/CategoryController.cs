@@ -29,7 +29,7 @@ namespace LudyCakeShop.Controllers
         {
             // TODO: create Custom object binder
             List<CategoryWithProductsDTO> result = new List<CategoryWithProductsDTO>();
-            foreach (var kp in _requestDirector.GetProductsByCategory())
+            foreach (var kp in _requestDirector.GetProductsByCategories())
             {
                 CategoryWithProductsDTO val = new CategoryWithProductsDTO();
                 val._id = kp.Key.CategoryID;
