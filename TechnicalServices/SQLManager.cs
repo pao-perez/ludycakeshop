@@ -122,9 +122,10 @@ namespace LudyCakeShop.TechnicalServices
                     for (int Index = 0; Index < dataReader.FieldCount; Index++)
                     {
                         PropertyInfo storedProp = props[Index];
-                        if (storedProp != null)
+                        var val = dataReader[Index];
+                        if (storedProp != null && val != DBNull.Value)
                         {
-                            storedProp.SetValue(obj, dataReader[Index]);
+                            storedProp.SetValue(obj, val);
                         }
                     }
                     objects.Add(obj);
