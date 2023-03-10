@@ -18,7 +18,7 @@ namespace LudyCakeShop.Services
             _productManager = new();
         }
 
-        public Dictionary<Category, List<Product>> GetProductsByCategory()
+        public Dictionary<Category, List<Product>> GetProductsByCategories()
         {
             List<Category> categories = (List<Category>)_categoryManager.GetCategories();
 
