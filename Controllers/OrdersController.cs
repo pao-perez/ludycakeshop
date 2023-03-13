@@ -1,12 +1,6 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LudyCakeShop.Controllers
 {
@@ -23,7 +17,7 @@ namespace LudyCakeShop.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
             return Ok(_requestDirector.GetOrders());
         }
@@ -50,7 +44,7 @@ namespace LudyCakeShop.Controllers
             order.OrderTotal = orderDTO.orderTotal;
             order.OrderStatus = orderDTO.status;
 
-            return Ok(_requestDirector.SubmitOrder(order));
+            return Ok(_requestDirector.AddOrder(order));
         }
 
         [HttpPut]
