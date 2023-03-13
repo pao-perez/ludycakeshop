@@ -27,7 +27,7 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.Select<Product>("GetProductByID", sqlParameters, typeof(Product));
         }
 
-        public bool AddProduct(Product product)
+        public bool CreateProduct(Product product)
         {
             SQLManager sqlManager = new();
 

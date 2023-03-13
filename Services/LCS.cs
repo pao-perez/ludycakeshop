@@ -28,9 +28,9 @@ namespace LudyCakeShop.Services
             return products.GroupBy(product => product.CategoryID).ToDictionary(p => categories.Where(c => c.CategoryID == p.Key).FirstOrDefault(), p => p.ToList());
         }
 
-        public bool AddProduct(Product product)
+        public bool CreateProduct(Product product)
         {
-            return _productManager.AddProduct(product);
+            return _productManager.CreateProduct(product);
         }
 
         public bool UpdateProduct(Product product)
@@ -48,9 +48,9 @@ namespace LudyCakeShop.Services
             return _productManager.DeleteProduct(id);
         }
 
-        public bool AddOrder(Order order)
+        public bool CreateOrder(Order order)
         {
-            return _orderManager.AddOrder(order);
+            return _orderManager.CreateOrder(order);
         }
 
         public bool UpdateOrder(Order order)

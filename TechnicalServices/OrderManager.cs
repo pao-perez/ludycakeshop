@@ -29,7 +29,7 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.Select<Order>("GetOrdersByOrderNumber", sqlParameters, typeof(Order));
         }
 
-        public bool AddOrder(Order order)
+        public bool CreateOrder(Order order)
         {
             SQLManager sqlManager = new();
 
