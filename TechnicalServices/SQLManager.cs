@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace LudyCakeShop.TechnicalServices
 {
@@ -28,7 +26,7 @@ namespace LudyCakeShop.TechnicalServices
             };
         }
 
-        public static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure)
+        public static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure) 
         {
             SqlCommand command = new();
             command.Connection = datasourceConnection;
@@ -150,6 +148,22 @@ namespace LudyCakeShop.TechnicalServices
             {
                 command.Parameters.Add(sqlParameter);
             }
+
+            success = command.ExecuteNonQuery() > 0;
+
+            _sqlDatasourceConnection.Close();
+
+            return success;
+        }
+
+        public bool Delete(string storedProcedure, SqlParameter sqlParameter)
+        {
+            bool success = false;
+            _sqlDatasourceConnection.Open();
+
+            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
+
+            command.Parameters.Add(sqlParameter);
 
             success = command.ExecuteNonQuery() > 0;
 

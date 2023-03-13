@@ -1,10 +1,8 @@
-﻿using LudyCakeShop.Controllers;
-using LudyCakeShop.Domain;
+﻿using LudyCakeShop.Domain;
 using LudyCakeShop.TechnicalServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LudyCakeShop.Services
 {
@@ -30,7 +28,27 @@ namespace LudyCakeShop.Services
             return products.GroupBy(product => product.CategoryID).ToDictionary(p => categories.Where(c => c.CategoryID == p.Key).FirstOrDefault(), p => p.ToList());
         }
 
-        public bool SubmitOrder(Order order)
+        public bool AddProduct(Product product)
+        {
+            return _productManager.AddProduct(product);
+        }
+
+        public bool UpdateProduct(Product product)
+        {
+            return _productManager.UpdateProduct(product);
+        }
+
+        public Product GetProduct(int id)
+        {
+            return _productManager.GetProduct(id);
+        }
+
+        public bool DeleteProduct(int id)
+        {
+            return _productManager.DeleteProduct(id);
+        }
+
+        public bool AddOrder(Order order)
         {
             return _orderManager.AddOrder(order);
         }
