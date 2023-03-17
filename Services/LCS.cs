@@ -1,6 +1,5 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.TechnicalServices;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,28 +18,24 @@ namespace LudyCakeShop.Services
             _orderManager = new();
         }
 
-        public Dictionary<Category, List<Product>> GetProductsByCategories()
-        {
-            List<Category> categories = (List<Category>)_categoryManager.GetCategories();
-
-            List<Product> products = (List<Product>)_productManager.GetProducts();
-
-            return products.GroupBy(product => product.CategoryID).ToDictionary(p => categories.Where(c => c.CategoryID == p.Key).FirstOrDefault(), p => p.ToList());
-        }
-
         public bool CreateProduct(Product product)
         {
             return _productManager.CreateProduct(product);
         }
 
-        public bool UpdateProduct(Product product)
+        public bool UpdateProduct(int productID, Product product)
         {
-            return _productManager.UpdateProduct(product);
+            return _productManager.UpdateProduct(productID, product);
         }
 
         public Product GetProduct(int id)
         {
             return _productManager.GetProduct(id);
+        }
+
+        public IEnumerable<Product> GetProducts()
+        {
+            return (List<Product>)_productManager.GetProducts();
         }
 
         public bool DeleteProduct(int id)
@@ -53,9 +48,9 @@ namespace LudyCakeShop.Services
             return _orderManager.CreateOrder(order);
         }
 
-        public bool UpdateOrder(Order order)
+        public bool UpdateOrder(int orderNumber, Order order)
         {
-            return _orderManager.UpdateOrder(order);
+            return _orderManager.UpdateOrder(orderNumber, order);
         }
 
         public IEnumerable<Order> GetOrders()
@@ -63,9 +58,9 @@ namespace LudyCakeShop.Services
             return (List<Order>)_orderManager.GetOrders();
         }
 
-        public Order GetOrder(int id)
+        public Order GetOrder(int orderNumber)
         {
-            return _orderManager.GetOrder(id);
+            return _orderManager.GetOrder(orderNumber);
         }
     }
 }

@@ -11,62 +11,51 @@ namespace LudyCakeShop.Controllers
     {
         private readonly LCS _requestDirector;
 
-        public ProductsController()
-        {
+        public ProductsController() =>
             _requestDirector = new();
-        }
 
         [HttpGet]
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            // TODO: create Custom object binder
-            List<ProductsDTO> result = new List<ProductsDTO>();
-            foreach (var kp in _requestDirector.GetProductsByCategories())
-            {
-                ProductsDTO val = new ProductsDTO();
-                val._id = kp.Key.CategoryID;
-                val.name = kp.Key.CategoryName;
-                val.products = kp.Value;
-                result.Add(val);
-            }
+            IEnumerable<ProductDTO> productsDTO = Mapper.MaptoDTOs(_requestDirector.GetProducts());
 
-            return Ok(result);
+            return Ok(productsDTO);
         }
 
-        [HttpGet("{_id}")]
+        [HttpGet("{productID}")]
         [Produces("application/json")]
-        public IActionResult GetByID(int _id)
+        public IActionResult GetByID(int productID)
         {
-            return Ok(_requestDirector.GetProduct(_id));
+            ProductDTO productDTO = Mapper.MaptoDTO(_requestDirector.GetProduct(productID));
+
+            return Ok(productDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult Post(ProductsDTO productsDTO)
+        public IActionResult Post(ProductDTO productDTO)
         {
+            Product product = Mapper.MaptoDomain(productDTO);
+
             // TODO: Change Ok to Created
-            Product product = new();
-            product.CategoryID = productsDTO._id;
-
-            return Ok(_requestDirector.AddProduct(product));
+            return Ok(_requestDirector.CreateProduct(product));
         }
 
-        [HttpPut]
+        [HttpPut("{productID}")]
         [Consumes("application/json")]
-        public IActionResult Put(ProductsDTO productsDTO)
+        public IActionResult Put(int productID, ProductDTO productDTO)
         {
-            Product product = new();
-            product.CategoryID = productsDTO._id;
+            Product product = Mapper.MaptoDomain(productDTO);
 
-            return Ok(_requestDirector.UpdateProduct(product));
+            return Ok(_requestDirector.UpdateProduct(productID, product));
         }
 
-        [HttpDelete("{_id}")]
+        [HttpDelete("{productID}")]
         [Consumes("application/json")]
-        public IActionResult Delete(int _id)
+        public IActionResult Delete(int productID)
         {
-            _requestDirector.DeleteProduct(_id);
+            _requestDirector.DeleteProduct(productID);
             return NoContent();
         }
     }

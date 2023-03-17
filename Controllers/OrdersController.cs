@@ -1,6 +1,7 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace LudyCakeShop.Controllers
 {
@@ -10,59 +11,44 @@ namespace LudyCakeShop.Controllers
     {
         private readonly LCS _requestDirector;
 
-        public OrdersController()
-        {
+        public OrdersController() =>
             _requestDirector = new();
-        }
 
         [HttpGet]
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            return Ok(_requestDirector.GetOrders());
+            IEnumerable<OrderDTO> ordersDTO = Mapper.MaptoDTOs(_requestDirector.GetOrders());
+            
+            return Ok(ordersDTO);
         }
 
-        [HttpGet("{_id}")]
+        [HttpGet("{orderNumber}")]
         [Produces("application/json")]
-        public IActionResult GetByID(int _id)
+        public IActionResult GetByID(int orderNumber)
         {
-            return Ok(_requestDirector.GetOrder(_id));
+            OrderDTO orderDTO = Mapper.MaptoDTO(_requestDirector.GetOrder(orderNumber));
+
+            return Ok(orderDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Post(OrderDTO orderDTO)
         {
-            // TODO: Change Ok to Created
-            Order order = new();
-            order.Description = orderDTO.note;
-            order.Address = orderDTO.address;
-            order.CustomerName = orderDTO.customerName;
-            order.Email = orderDTO.email;
-            order.Phone = orderDTO.phone;
-            order.OrderDate = orderDTO.orderDate;
-            order.OrderTotal = orderDTO.orderTotal;
-            order.OrderStatus = orderDTO.status;
+            Order order = Mapper.MaptoDomain(orderDTO);
 
-            return Ok(_requestDirector.AddOrder(order));
+            // TODO: Change Ok to Created
+            return Ok(_requestDirector.CreateOrder(order));
         }
 
-        [HttpPut]
+        [HttpPut("{orderNumber}")]
         [Consumes("application/json")]
-        public IActionResult Put(OrderDTO orderDTO)
+        public IActionResult Put(int orderNumber, OrderDTO ordersDTO)
         {
-            Order order = new();
-            order.OrderNumber = orderDTO._id;
-            order.Address = orderDTO.address;
-            order.CustomerName = orderDTO.customerName;
-            order.Email = orderDTO.email;
-            order.Phone = orderDTO.phone;
-            order.OrderDate = orderDTO.orderDate;
-            order.OrderTotal = orderDTO.orderTotal;
-            order.Description = orderDTO.note;
-            order.OrderStatus = orderDTO.status;
+            Order order = Mapper.MaptoDomain(ordersDTO);
 
-            return Ok(_requestDirector.UpdateOrder(order));
+            return Ok(_requestDirector.UpdateOrder(orderNumber, order));
         }
     }
 }

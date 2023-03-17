@@ -19,14 +19,14 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.SelectAll<Order>("GetOrders", sqlParameters, typeof(Order));
         }
 
-        public Order GetOrder(int id)
+        public Order GetOrder(int orderNumber)
         {
             SQLManager sqlManager = new();
 
             List<SqlParameter> sqlParameters = new();
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderNumber", SqlDbType.Int, id));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderNumber", SqlDbType.Int, orderNumber));
 
-            return sqlManager.Select<Order>("GetOrdersByOrderNumber", sqlParameters, typeof(Order));
+            return sqlManager.Select<Order>("GetOrder", sqlParameters, typeof(Order));
         }
 
         public bool CreateOrder(Order order)
@@ -36,30 +36,34 @@ namespace LudyCakeShop.TechnicalServices
             List<SqlParameter> sqlParameters = new();
 
             sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerName", SqlDbType.VarChar, order.CustomerName));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Address", SqlDbType.VarChar, order.Address));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Email", SqlDbType.VarChar, order.Email));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Phone", SqlDbType.VarChar, order.Phone));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Description", SqlDbType.VarChar, order.Description));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderTotal", SqlDbType.Money, order.OrderTotal));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerAddress", SqlDbType.VarChar, order.CustomerAddress));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerEmail", SqlDbType.VarChar, order.CustomerEmail));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerContactNumber", SqlDbType.VarChar, order.CustomerContactNumber));
             sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderStatus", SqlDbType.VarChar, order.OrderStatus));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@GST", SqlDbType.Money, order.GST));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SubTotal", SqlDbType.Money, order.SubTotal));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SaleTotal", SqlDbType.Money, order.SaleTotal));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@InvoiceNumber", SqlDbType.Int, order.InvoiceNumber));
 
-            return sqlManager.Upsert("AddOrder", sqlParameters);
+            return sqlManager.Upsert("CreateOrder", sqlParameters);
         }
 
-        public bool UpdateOrder(Order order)
+        public bool UpdateOrder(int orderNumber, Order order)
         {
             SQLManager sqlManager = new();
 
             List<SqlParameter> sqlParameters = new();
 
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderNumber", SqlDbType.VarChar, order.OrderNumber));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderNumber", SqlDbType.Int, orderNumber));
             sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerName", SqlDbType.VarChar, order.CustomerName));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Address", SqlDbType.VarChar, order.Address));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Email", SqlDbType.VarChar, order.Email));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Phone", SqlDbType.VarChar, order.Phone));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Description", SqlDbType.VarChar, order.Description));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderTotal", SqlDbType.Money, order.OrderTotal));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerAddress", SqlDbType.VarChar, order.CustomerAddress));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerEmail", SqlDbType.VarChar, order.CustomerEmail));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerContactNumber", SqlDbType.VarChar, order.CustomerContactNumber));
             sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderStatus", SqlDbType.VarChar, order.OrderStatus));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@GST", SqlDbType.Money, order.GST));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SubTotal", SqlDbType.Money, order.SubTotal));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SaleTotal", SqlDbType.Money, order.SaleTotal));
+            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@InvoiceNumber", SqlDbType.Int, order.InvoiceNumber));
 
             return sqlManager.Upsert("UpdateOrder", sqlParameters);
         }
