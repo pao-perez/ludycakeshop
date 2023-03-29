@@ -1,10 +1,11 @@
 ﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Linq;
 
 namespace LudyCakeShop.TechnicalServices
 {
@@ -18,15 +19,13 @@ namespace LudyCakeShop.TechnicalServices
             DatabaseUsersBuilder.AddJsonFile("appsettings.json");
             IConfiguration DatabaseUsersConfiguration = DatabaseUsersBuilder.Build();
 
-            string sqlConnectionString = DatabaseUsersConfiguration.GetConnectionString("SQLServerConn");
-
-            _sqlDatasourceConnection = new()
-            {
-                ConnectionString = sqlConnectionString
-            };
+            _sqlDatasourceConnection = new();
+            _sqlDatasourceConnection.ConnectionString =
+            DatabaseUsersConfiguration.GetConnectionString("SQLServer");
+            //ConnectionString = @"Persist Security Info=False;Integrated Security = True;Database=pperez5;User ID=CAMS-MOSQUEDA\pawie;server=(local);TrustServerCertificate=True"
         }
 
-        public static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure) 
+        private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure)
         {
             SqlCommand command = new();
             command.Connection = datasourceConnection;
@@ -36,9 +35,20 @@ namespace LudyCakeShop.TechnicalServices
             return command;
         }
 
+        private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure, SqlTransaction sqlTransaction)
+        {
+            SqlCommand command = new();
+            command.Connection = datasourceConnection;
+            command.CommandType = CommandType.StoredProcedure;
+            command.CommandText = storedProcedure;
+            command.Transaction = sqlTransaction;
+
+            return command;
+        }
+
         public static SqlParameter CreateSqlCommandInputParameter(string storedProcedureParameter, SqlDbType sqlDbType, object sqlValue)
         {
-            SqlParameter commandParameter = new SqlParameter
+            SqlParameter commandParameter = new()
             {
                 ParameterName = storedProcedureParameter,
                 SqlDbType = sqlDbType,
@@ -49,27 +59,27 @@ namespace LudyCakeShop.TechnicalServices
             return commandParameter;
         }
 
-        public T Select<T>(string storedProcedure, IEnumerable<SqlParameter> sqlParameters, Type classType)
+        public T Select<T>(DatasourceParameter datasourceParameter)
         {
             _sqlDatasourceConnection.Open();
 
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
+            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure);
 
-            foreach (SqlParameter sqlParameter in sqlParameters)
+            foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
             {
-                command.Parameters.Add(sqlParameter);
+                command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
             }
 
             SqlDataReader dataReader = command.ExecuteReader();
 
-            T obj = (T)Activator.CreateInstance(null, classType.FullName).Unwrap();
+            T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
             if (dataReader.HasRows)
             {
-                PropertyInfo prop = null;
-                List<PropertyInfo> props = new List<PropertyInfo>();
+                PropertyInfo prop;
+                List<PropertyInfo> props = new();
                 for (int index = 0; index < dataReader.FieldCount; index++)
                 {
-                    prop = classType.GetProperty(dataReader.GetName(index));
+                    prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
                     props.Add(prop);
                 }
                 while (dataReader.Read())
@@ -92,32 +102,32 @@ namespace LudyCakeShop.TechnicalServices
             return obj;
         }
 
-        public IEnumerable<T> SelectAll<T>(string storedProcedure, IEnumerable<SqlParameter> sqlParameters, Type classType)
+        public IEnumerable<T> SelectAll<T>(DatasourceParameter datasourceParameter)
         {
             _sqlDatasourceConnection.Open();
 
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
+            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure);
 
-            foreach (SqlParameter sqlParameter in sqlParameters)
+            foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
             {
-                command.Parameters.Add(sqlParameter);
+                command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
             }
 
             SqlDataReader dataReader = command.ExecuteReader();
 
-            List<T> objects = new List<T>();
+            List<T> objects = new();
             if (dataReader.HasRows)
             {
-                PropertyInfo prop = null;
-                List<PropertyInfo> props = new List<PropertyInfo>();
+                PropertyInfo prop;
+                List<PropertyInfo> props = new();
                 for (int index = 0; index < dataReader.FieldCount; index++)
                 {
-                    prop = classType.GetProperty(dataReader.GetName(index));
+                    prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
                     props.Add(prop);
                 }
                 while (dataReader.Read())
                 {
-                    T obj = (T)Activator.CreateInstance(null, classType.FullName).Unwrap();
+                    T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
                     for (int index = 0; index < dataReader.FieldCount; index++)
                     {
                         PropertyInfo storedProp = props[index];
@@ -137,37 +147,94 @@ namespace LudyCakeShop.TechnicalServices
             return objects;
         }
 
-        public bool Upsert(string storedProcedure, IEnumerable<SqlParameter> sqlParameters)
+        public bool Delete(IEnumerable<DatasourceParameter> datasourceParameters)
         {
             bool success = false;
             _sqlDatasourceConnection.Open();
+            SqlTransaction sqlDatasourceTransaction = _sqlDatasourceConnection.BeginTransaction();
 
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
-
-            foreach (SqlParameter sqlParameter in sqlParameters)
+            IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
             {
-                command.Parameters.Add(sqlParameter);
+                SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+
+                foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
+                {
+                    command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
+                }
+
+                return command;
+            });
+
+
+            try
+            {
+                foreach (SqlCommand command in sqlCommands)
+                {
+                    command.ExecuteNonQuery();
+                }
+                sqlDatasourceTransaction.Commit();
             }
-
-            success = command.ExecuteNonQuery() > 0;
-
-            _sqlDatasourceConnection.Close();
+            catch (Exception)
+            {
+                sqlDatasourceTransaction.Rollback();
+                throw;
+            }
+            finally
+            {
+                _sqlDatasourceConnection.Close();
+            }
 
             return success;
         }
 
-        public bool Delete(string storedProcedure, SqlParameter sqlParameter)
+        public bool DeleteAll(string storedProcedure)
         {
-            bool success = false;
+            bool success;
             _sqlDatasourceConnection.Open();
 
             SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
 
-            command.Parameters.Add(sqlParameter);
-
             success = command.ExecuteNonQuery() > 0;
 
             _sqlDatasourceConnection.Close();
+            return success;
+        }
+
+        public bool UpsertTransaction(IEnumerable<DatasourceParameter> datasourceParameters)
+        {
+            bool success = true;
+            _sqlDatasourceConnection.Open();
+            SqlTransaction sqlDatasourceTransaction = _sqlDatasourceConnection.BeginTransaction();
+
+            IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
+            {
+                SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+
+                foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
+                {
+                    command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
+                }
+
+                return command;
+            });
+
+            try
+            {
+                foreach (SqlCommand command in sqlCommands)
+                {
+                    command.ExecuteNonQuery();
+                }
+                sqlDatasourceTransaction.Commit();
+            }
+            catch (Exception)
+            {
+                sqlDatasourceTransaction.Rollback();
+                throw; // TODO: Create a custom DAOException OR Keep this (rethrow while preserving stack info) and handle in Specific Manager or Services
+            }
+            finally
+            {
+                _sqlDatasourceConnection.Close();
+            }
 
             return success;
         }

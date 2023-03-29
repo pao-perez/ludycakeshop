@@ -1,10 +1,6 @@
 ﻿using LudyCakeShop.Domain;
-using Microsoft.Data.SqlClient;
-using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LudyCakeShop.TechnicalServices
 {
@@ -13,59 +9,133 @@ namespace LudyCakeShop.TechnicalServices
         public IEnumerable<Order> GetOrders()
         {
             SQLManager sqlManager = new();
+            List<StoredProcedureParameter> storedProcedureParameters = new();
 
-            List<SqlParameter> sqlParameters = new();
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetOrders",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(Order)
+            };
 
-            return sqlManager.SelectAll<Order>("GetOrders", sqlParameters, typeof(Order));
+            return sqlManager.SelectAll<Order>(datasourceParameter);
+        }
+
+        public IEnumerable<OrderItem> GetOrderItems(int orderNumber)
+        {
+            SQLManager sqlManager = new();
+
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderNumber });
+
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetOrderItems",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(OrderItem)
+            };
+
+            return sqlManager.SelectAll<OrderItem>(datasourceParameter);
         }
 
         public Order GetOrder(int orderNumber)
         {
             SQLManager sqlManager = new();
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderNumber });
 
-            List<SqlParameter> sqlParameters = new();
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderNumber", SqlDbType.Int, orderNumber));
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetOrder",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(Order)
+            };
 
-            return sqlManager.Select<Order>("GetOrder", sqlParameters, typeof(Order));
+            return sqlManager.Select<Order>(datasourceParameter);
         }
 
         public bool CreateOrder(Order order)
         {
             SQLManager sqlManager = new();
+            List<DatasourceParameter> datasourceParameters = new();
 
-            List<SqlParameter> sqlParameters = new();
+            List<StoredProcedureParameter> createOrderStoredProcedureParameters = new();
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerName });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerAddress", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerAddress });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerEmail });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerContactNumber", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerContactNumber });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderStatus", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.OrderStatus });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@GST", ParameterSqlDbType = SqlDbType.Money, ParameterValue = order.GST });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SubTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = order.SubTotal });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SaleTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = order.SaleTotal });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@InvoiceNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = order.InvoiceNumber });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "CreateOrder",
+                StoredProcedureParameters = createOrderStoredProcedureParameters
+            });
 
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerName", SqlDbType.VarChar, order.CustomerName));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerAddress", SqlDbType.VarChar, order.CustomerAddress));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerEmail", SqlDbType.VarChar, order.CustomerEmail));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerContactNumber", SqlDbType.VarChar, order.CustomerContactNumber));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderStatus", SqlDbType.VarChar, order.OrderStatus));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@GST", SqlDbType.Money, order.GST));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SubTotal", SqlDbType.Money, order.SubTotal));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SaleTotal", SqlDbType.Money, order.SaleTotal));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@InvoiceNumber", SqlDbType.Int, order.InvoiceNumber));
+            // create order items
+            foreach (OrderItem orderItem in order.OrderItems)
+            {
+                // TODO: check product quantity count if enough for order ItemQuantity
 
-            return sqlManager.Upsert("CreateOrder", sqlParameters);
+                List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.OrderNumber });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.ProductID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemQuantity", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.ItemQuantity });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemTotal", ParameterSqlDbType = SqlDbType.Decimal, ParameterValue = orderItem.ItemTotal });
+                datasourceParameters.Add(new()
+                {
+                    StoredProcedure = "UpdateOrderItem",
+                    StoredProcedureParameters = orderItemStoredProcedureParameters
+                });
+            }
+
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
 
         public bool UpdateOrder(int orderNumber, Order order)
         {
             SQLManager sqlManager = new();
+            List<DatasourceParameter> datasourceParameters = new();
 
-            List<SqlParameter> sqlParameters = new();
+            // update order
+            List<StoredProcedureParameter> updateOrderStoredProcedureParameters = new();
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = order.OrderNumber });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerName });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerAddress", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerAddress });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerEmail });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerContactNumber", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerContactNumber });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderStatus", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.OrderStatus });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@GST", ParameterSqlDbType = SqlDbType.Money, ParameterValue = order.GST });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SubTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = order.SubTotal });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SaleTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = order.SaleTotal });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@InvoiceNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = order.InvoiceNumber });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "UpdateOrder",
+                StoredProcedureParameters = updateOrderStoredProcedureParameters
+            });
 
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderNumber", SqlDbType.Int, orderNumber));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerName", SqlDbType.VarChar, order.CustomerName));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerAddress", SqlDbType.VarChar, order.CustomerAddress));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerEmail", SqlDbType.VarChar, order.CustomerEmail));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CustomerContactNumber", SqlDbType.VarChar, order.CustomerContactNumber));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@OrderStatus", SqlDbType.VarChar, order.OrderStatus));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@GST", SqlDbType.Money, order.GST));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SubTotal", SqlDbType.Money, order.SubTotal));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@SaleTotal", SqlDbType.Money, order.SaleTotal));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@InvoiceNumber", SqlDbType.Int, order.InvoiceNumber));
+            // update order items
+            foreach (OrderItem orderItem in order.OrderItems)
+            {
+                // TODO: check product quantity count if enough for order ItemQuantity
 
-            return sqlManager.Upsert("UpdateOrder", sqlParameters);
+                List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.OrderNumber });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.ProductID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemQuantity", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.ItemQuantity });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemTotal", ParameterSqlDbType = SqlDbType.Decimal, ParameterValue = orderItem.ItemTotal });
+                datasourceParameters.Add(new()
+                {
+                    StoredProcedure = "UpdateOrderItem",
+                    StoredProcedureParameters = orderItemStoredProcedureParameters
+                });
+            }
+
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
     }
 }

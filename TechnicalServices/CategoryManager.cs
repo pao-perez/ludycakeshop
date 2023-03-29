@@ -1,5 +1,4 @@
 ﻿using LudyCakeShop.Domain;
-using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 
 namespace LudyCakeShop.TechnicalServices
@@ -8,11 +7,15 @@ namespace LudyCakeShop.TechnicalServices
     {
         public IEnumerable<Category> GetCategories()
         {
-            SQLManager datasourceManager = new();
+            SQLManager sqlManager = new();
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetCategories",
+                StoredProcedureParameters = new List<StoredProcedureParameter>(),
+                ClassType = typeof(Category)
+            };
 
-            List<SqlParameter> sqlParameters = new();
-
-            return datasourceManager.SelectAll<Category>("GetCategories", sqlParameters, typeof(Category));
+            return sqlManager.SelectAll<Category>(datasourceParameter);
         }
     }
 }

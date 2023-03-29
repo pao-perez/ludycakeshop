@@ -1,5 +1,4 @@
 ﻿using LudyCakeShop.Domain;
-using Microsoft.Data.SqlClient;
 using System.Collections.Generic;
 using System.Data;
 
@@ -10,66 +9,92 @@ namespace LudyCakeShop.TechnicalServices
         public IEnumerable<Product> GetProducts()
         {
             SQLManager sqlManager = new();
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetProducts",
+                StoredProcedureParameters = new List<StoredProcedureParameter>(),
+                ClassType = typeof(Product)
+            };
 
-            List<SqlParameter> sqlParameters = new();
-
-            return sqlManager.SelectAll<Product>("GetProducts", sqlParameters, typeof(Product));
+            return sqlManager.SelectAll<Product>(datasourceParameter);
         }
 
         public Product GetProduct(int id)
         {
             SQLManager sqlManager = new();
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = id });
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetProduct",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(Product)
+            };
 
-            List<SqlParameter> sqlParameters = new();
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductID", SqlDbType.Int, id));
-
-            return sqlManager.Select<Product>("GetProduct", sqlParameters, typeof(Product));
+            return sqlManager.Select<Product>(datasourceParameter);
         }
 
         public bool CreateProduct(Product product)
         {
             SQLManager sqlManager = new();
 
-            List<SqlParameter> sqlParameters = new();
+            List<DatasourceParameter> datasourceParameters = new();
+            List<StoredProcedureParameter> createProductStoredProcedureParameters = new();
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.ProductName });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductDescription", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.ProductDescription });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityAvailable", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityAvailable });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@UnitPrice", ParameterSqlDbType = SqlDbType.Money, ParameterValue = product.UnitPrice });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Discontinued", ParameterSqlDbType = SqlDbType.Bit, ParameterValue = product.Discontinued });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityPerUnit", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityPerUnit });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.CategoryID });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "CreateProduct",
+                StoredProcedureParameters = createProductStoredProcedureParameters
+            });
 
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductName", SqlDbType.VarChar, product.ProductName));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductDescription", SqlDbType.VarChar, product.ProductDescription));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@QuantityAvailable", SqlDbType.Int, product.QuantityAvailable));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@UnitPrice", SqlDbType.Money, product.UnitPrice));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Discontinued", SqlDbType.Bit, product.Discontinued));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@QuantityPerUnit", SqlDbType.VarChar, product.QuantityPerUnit));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CategoryID", SqlDbType.Int, product.CategoryID));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductImageID", SqlDbType.Int, product.ProductImageID));
-
-            return sqlManager.Upsert("CreateProduct", sqlParameters);
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
 
         public bool UpdateProduct(int productID, Product product)
         {
             SQLManager sqlManager = new();
 
-            List<SqlParameter> sqlParameters = new();
+            List<DatasourceParameter> datasourceParameters = new();
+            List<StoredProcedureParameter> createProductStoredProcedureParameters = new();
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = productID });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.ProductName });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductDescription", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.ProductDescription });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityAvailable", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityAvailable });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@UnitPrice", ParameterSqlDbType = SqlDbType.Money, ParameterValue = product.UnitPrice });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Discontinued", ParameterSqlDbType = SqlDbType.Bit, ParameterValue = product.Discontinued });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityPerUnit", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityPerUnit });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.CategoryID });
+            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "UpdateProduct",
+                StoredProcedureParameters = createProductStoredProcedureParameters
+            });
 
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductID", SqlDbType.VarChar, productID));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductName", SqlDbType.VarChar, product.ProductName));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductDescription", SqlDbType.VarChar, product.ProductDescription));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@QuantityAvailable", SqlDbType.Int, product.QuantityAvailable));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@UnitPrice", SqlDbType.Money, product.UnitPrice));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@Discontinued", SqlDbType.Bit, product.Discontinued));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@QuantityPerUnit", SqlDbType.VarChar, product.QuantityPerUnit));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@CategoryID", SqlDbType.Int, product.CategoryID));
-            sqlParameters.Add(SQLManager.CreateSqlCommandInputParameter("@ProductImageID", SqlDbType.Int, product.ProductImageID));
-
-            return sqlManager.Upsert("UpdateProduct", sqlParameters);
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
 
         public bool DeleteProduct(int id)
         {
             SQLManager sqlManager = new();
+            //TODO: check if product ID exists in any "active" order
+            List<DatasourceParameter> datasourceParameters = new();
+            List<StoredProcedureParameter> deleteProductStoredProcedureParameters = new();
+            deleteProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = id });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "DeleteProduct",
+                StoredProcedureParameters = deleteProductStoredProcedureParameters
+            });
 
-            SqlParameter sqlParamter = SQLManager.CreateSqlCommandInputParameter("@ProductID", SqlDbType.Int, id);
-
-            return sqlManager.Delete("DeleteProduct", sqlParamter);
+            return sqlManager.Delete(datasourceParameters);
         }
     }
 }

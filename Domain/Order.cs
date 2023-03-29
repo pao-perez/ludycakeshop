@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LudyCakeShop.Domain
 {
@@ -16,5 +17,6 @@ namespace LudyCakeShop.Domain
         public string CustomerEmail { get; set; }
         public string CustomerContactNumber { get; set; }
         public string Note { get; set; }
+        public IEnumerable<OrderItem> OrderItems { get; set; }
     }
 }
