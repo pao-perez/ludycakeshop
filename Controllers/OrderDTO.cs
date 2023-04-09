@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace LudyCakeShop.Controllers
 {
@@ -16,5 +17,6 @@ namespace LudyCakeShop.Controllers
         public string CustomerEmail { get; set; }
         public string CustomerContactNumber { get; set; }
         public string Note { get; set; }
+        public IEnumerable<OrderItemDTO> OrderItems { get; set; }
     }
 }

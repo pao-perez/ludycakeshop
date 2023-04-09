@@ -1,6 +1,7 @@
 ﻿using LudyCakeShop.Domain;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace LudyCakeShop.Controllers
 {
@@ -11,6 +12,17 @@ namespace LudyCakeShop.Controllers
             IEnumerable<OrderDTO> ordersDTOList = ((List<Order>)ordersList).ConvertAll(new Converter<Order, OrderDTO>(MaptoDTO));
 
             return ordersDTOList;
+        }
+
+        public static OrderItemDTO MaptoDTO(OrderItem orderItem)
+        {
+            OrderItemDTO orderItemDTO = new();
+            orderItemDTO.OrderNumber = orderItem.OrderNumber;
+            orderItemDTO.ProductID = orderItem.ProductID;
+            orderItemDTO.ItemTotal = orderItem.ItemTotal;
+            orderItemDTO.ItemQuantity = orderItem.ItemQuantity;
+
+            return orderItemDTO;
         }
 
         public static OrderDTO MaptoDTO(Order order)
@@ -28,6 +40,7 @@ namespace LudyCakeShop.Controllers
             orderDTO.CustomerEmail = order.CustomerEmail;
             orderDTO.CustomerContactNumber = order.CustomerContactNumber;
             orderDTO.Note = order.Note;
+            orderDTO.OrderItems = order.OrderItems.Select(orderItem => MaptoDTO(orderItem));
 
             return orderDTO;
         }

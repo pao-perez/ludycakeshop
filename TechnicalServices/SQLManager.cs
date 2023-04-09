@@ -21,8 +21,7 @@ namespace LudyCakeShop.TechnicalServices
 
             _sqlDatasourceConnection = new();
             _sqlDatasourceConnection.ConnectionString =
-            DatabaseUsersConfiguration.GetConnectionString("SQLServer");
-            //ConnectionString = @"Persist Security Info=False;Integrated Security = True;Database=pperez5;User ID=CAMS-MOSQUEDA\pawie;server=(local);TrustServerCertificate=True"
+            DatabaseUsersConfiguration.GetConnectionString("SQLServerConn");
         }
 
         private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure)
