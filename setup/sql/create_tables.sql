@@ -2,7 +2,7 @@ use ludycakeshop
 
 CREATE TABLE Category
 (
-	CategoryID INT IDENTITY (1,1) NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
+	CategoryID INT NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
 	CategoryName VARCHAR(30) NOT NULL,
 	Description VARCHAR(255) NULL, 
 	CategoryImage Image Null
@@ -11,7 +11,7 @@ CREATE TABLE Category
 
 CREATE TABLE Product
 (
-	ProductID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Product_ProductID PRIMARY KEY,
+	ProductID INT NOT NULL CONSTRAINT PK_Product_ProductID PRIMARY KEY,
 	ProductName VARCHAR(25) NOT NULL,
 	ProductDescription VARCHAR(200) NULL,
 	QuantityAvailable INT NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE Product
 
 CREATE TABLE ProductImage
 (
-	ProductImageID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_ProductImage_ProductImageID PRIMARY KEY,
+	ProductImageID INT NOT NULL CONSTRAINT PK_ProductImage_ProductImageID PRIMARY KEY,
 	ProductImage IMAGE NOT NULL,
 	DefaultImage IMAGE NULL
 )
@@ -33,10 +33,10 @@ CREATE TABLE ProductImage
 
 CREATE TABLE Orders
 (
-	OrderNumber INT IDENTITY (1,1) NOT NULL CONSTRAINT PK_Orders_OrderNumber PRIMARY KEY,
+	OrderNumber INT NOT NULL CONSTRAINT PK_Orders_OrderNumber PRIMARY KEY,
 	InvoiceNumber INT NULL,
-	OrderDate DATE NOT NULL CONSTRAINT DK_Orders_OrderDate DEFAULT(GETDATE()),
-	OrderStatus VARCHAR(20) NOT NULL,
+	OrderDate DATETIME NOT NULL CONSTRAINT DK_Orders_OrderDate DEFAULT(GETDATE()),
+	OrderStatus VARCHAR(20) NOT NULL CONSTRAINT DK_Orders_OrderStatus DEFAULT 'Submitted',
 	GST MONEY NOT NULL,
 	SubTotal MONEY NOT NULL,
 	SaleTotal MONEY NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE Orders
 	CustomerContactNumber VARCHAR(20) NOT NULL,
 	Note VARCHAR(255) NULL,
 )
-
+--Add types of Order status
 
 CREATE TABLE OrderItem
 (	
@@ -65,21 +65,31 @@ CREATE TABLE UserAccount
 	Password VARCHAR(60) NOT NULL,
 )
 
+ INSERT INTO Category
+	(CategoryID,CategoryName)
+ VALUES
+	(1,'Cakes')
+
+ INSERT INTO Category
+	(CategoryID,CategoryName)
+ VALUES
+	(2,'Breads')
+
 
 INSERT INTO Product
-	(ProductName,QuantityAvailable,UnitPrice,CategoryID)
+	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
 	VALUES
-	('Pandesal',40,4.56,1)
+	(1,'Pandesal',40,4.56,2)
 INSERT INTO Product
-	(ProductName,QuantityAvailable,UnitPrice,CategoryID)
+	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
 	VALUES
-	('Carrot Cake',2,11,2)
+	(2,'Carrot Cake',2,11,1)
 
 
 INSERT INTO Orders
-	(OrderStatus,GST,SubTotal,SaleTotal,CustomerName,CustomerContactNumber)
+	(OrderNumber,GST,SubTotal,SaleTotal,CustomerName,CustomerContactNumber)
 	VALUES
-	('Confirmed',.5,9.12,9.17,'John Doe',8245559238)
+	(1,.5,9.12,9.17,'John Doe',8245559238)
 INSERT INTO OrderItem
 	(OrderNumber,ProductID,ItemQuantity,ItemTotal)
 	VALUES
@@ -87,9 +97,9 @@ INSERT INTO OrderItem
 
 
 INSERT INTO Orders
-	(OrderStatus,GST,SubTotal,SaleTotal,CustomerName,CustomerContactNumber)
+	(OrderNumber,GST,SubTotal,SaleTotal,CustomerName,CustomerContactNumber)
 	VALUES
-	('For Pickup',1.03,20.12,21.15,'Mary Jane',8254449452)
+	(2,1.03,20.12,21.15,'Mary Jane',8254449452)
 INSERT INTO OrderItem
 	(OrderNumber,ProductID,ItemQuantity,ItemTotal)
 	VALUES
