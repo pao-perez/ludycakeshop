@@ -14,6 +14,17 @@ namespace LudyCakeShop.Controllers
             return ordersDTOList;
         }
 
+        public static OrderItem MaptoDomain(OrderItemDTO orderItemDTO)
+        {
+            OrderItem orderItem = new();
+            orderItem.OrderNumber = orderItemDTO.OrderNumber;
+            orderItem.ProductID = orderItemDTO.ProductID;
+            orderItem.ItemTotal = orderItemDTO.ItemTotal;
+            orderItem.ItemQuantity = orderItemDTO.ItemQuantity;
+
+            return orderItem;
+        }
+
         public static OrderItemDTO MaptoDTO(OrderItem orderItem)
         {
             OrderItemDTO orderItemDTO = new();
@@ -60,6 +71,7 @@ namespace LudyCakeShop.Controllers
             order.CustomerEmail = orderDTO.CustomerEmail;
             order.CustomerContactNumber = orderDTO.CustomerContactNumber;
             order.Note = orderDTO.Note;
+            order.OrderItems = orderDTO.OrderItems.Select(orderItemDTO => MaptoDomain(orderItemDTO));
 
             return order;
         }
