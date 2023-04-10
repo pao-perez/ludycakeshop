@@ -6,7 +6,6 @@ AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = 1
 
-
 	BEGIN
 		SELECT 
 			OrderID,

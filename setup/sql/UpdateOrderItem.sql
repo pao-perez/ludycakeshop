@@ -20,8 +20,11 @@ AS
 		RAISERROR('UpdateOrderItem - required parameter: @ItemTotal',16,1)
 
 		BEGIN
-			INSERT INTO OrderItem(OrderID,ProductID,ItemQuantity,ItemTotal)
-			VALUES (@OrderID,@ProductID,@ItemQuantity,@ItemTotal)
+			UPDATE OrderItem
+			SET ItemQuantity = @ItemQuantity,
+				ItemTotal = @ItemTotal
+			WHERE OrderID = @OrderID
+			AND ProductID = @ProductID;
 
 			IF @@ERROR = 0
 				SET @ReturnCode = 0

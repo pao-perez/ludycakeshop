@@ -1,39 +1,46 @@
 /*
-	Update Order Item
+	Update Order
 */
-CREATE PROCEDURE UpdateOrderItem(
-							@OrderID VARCHAR(36) = NULL,
-							@ProductID INT = NULL,
-							@ItemQuantity INT = NULL,
-							@ItemTotal MONEY = NULL)
+CREATE PROCEDURE UpdateOrder(@OrderID VARCHAR(36) = NULL,
+							@OrderStatus VARCHAR(20) = NULL,
+							@InvoiceNumber BIGINT = NULL,
+							@CustomerName VARCHAR(40) = NULL,
+							@CustomerAddress VARCHAR(50) = NULL,
+							@CustomerEmail VARCHAR(30) = NULL,
+							@CustomerContactNumber VARCHAR(20) =NULL,
+							@Note VARCHAR(255) = NULL,
+							@GST MONEY = NULL,
+							@SubTotal MONEY = NULL,
+							@SaleTotal MONEY = NULL)
 AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = -1
 	
 	IF @OrderID IS NULL
-		RAISERROR('UpdateOrderItem - required parameter: @OrderID',16,1)
-	ELSE IF @ProductID IS NULL
-		RAISERROR('UpdateOrderItem - required parameter: @ProductID',16,1)
-	ELSE IF @ItemQuantity IS NULL
-		RAISERROR('UpdateOrderItem - required parameter: @ItemQuantity',16,1)
-	ELSE IF @ItemTotal IS NULL
-		RAISERROR('UpdateOrderItem - required parameter: @ItemTotal',16,1)
-
+		RAISERROR('OrderID is required parameter: @OrderID',16,1)
+	ELSE
 		BEGIN
-			UPDATE OrderItem
-			SET ItemQuantity = @ItemQuantity,
-				ItemTotal = @ItemTotal
-			WHERE OrderID = @OrderID
-			AND ProductID = @ProductID;
+			UPDATE Orders
+			SET InvoiceNumber = @InvoiceNumber,
+				OrderStatus = @OrderStatus,
+				CustomerName = @CustomerName,
+				CustomerAddress = @CustomerAddress,
+				CustomerEmail = @CustomerEmail,
+				CustomerContactNumber = @CustomerContactNumber,
+				Note = @Note,
+				GST = @GST,
+				SubTotal = @SubTotal,
+				SaleTotal = @SaleTotal
+			WHERE OrderID = @OrderID;
 
 			IF @@ERROR = 0
 				SET @ReturnCode = 0
 			ELSE
-				RAISERROR('UpdateOrderItem - UPDATE ERROR : OrderItem Table',16,1)
+				RAISERROR('UpdateOrder - UPDATE ERROR : Orders Table',16,1)
 		END
 
 	Return @ReturnCode
 
-GRANT EXECUTE ON UpdateOrderItem TO aspnetcore
+GRANT EXECUTE ON UpdateOrder TO aspnetcore
 
-DROP PROCEDURE UpdateOrderItem
+DROP PROCEDURE UpdateOrder
