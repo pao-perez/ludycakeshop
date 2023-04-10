@@ -1,6 +1,7 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace LudyCakeShop.Controllers
@@ -18,45 +19,95 @@ namespace LudyCakeShop.Controllers
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            IEnumerable<ProductDTO> productsDTO = Mapper.MaptoDTOs(_requestDirector.GetProducts());
-
-            return Ok(productsDTO);
+            IEnumerable<Product> products;
+            try
+            {
+                products = _requestDirector.GetProducts();
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
+            IEnumerable<ProductDTO> productsDTO = Mapper.MaptoDTOs(products);
+            return StatusCode(200, productsDTO);
         }
 
         [HttpGet("{productID}")]
         [Produces("application/json")]
-        public IActionResult GetByID(int productID)
+        public IActionResult GetByID(string productID)
         {
-            ProductDTO productDTO = Mapper.MaptoDTO(_requestDirector.GetProduct(productID));
+            Product product;
+            try
+            {
+                product = _requestDirector.GetProduct(productID);
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
+            if (product == null)
+            {
+                return StatusCode(404, "ProductID not found.");
+            }
 
-            return Ok(productDTO);
+            ProductDTO productDTO = Mapper.MaptoDTO(product);
+            return StatusCode(200, productDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Post(ProductDTO productDTO)
         {
-            Product product = Mapper.MaptoDomain(productDTO);
+            string productID;
+            try
+            {
+                productID = _requestDirector.CreateProduct(Mapper.MaptoDomain(productDTO));
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
 
-            // TODO: Change Ok to Created
-            return Ok(_requestDirector.CreateProduct(product));
+            string path = HttpContext.Request.Path;
+            string createdURI = path + "/" + productID;
+            return StatusCode(201, createdURI);
         }
 
         [HttpPut("{productID}")]
         [Consumes("application/json")]
-        public IActionResult Put(int productID, ProductDTO productDTO)
+        public IActionResult Put(string productID, ProductDTO productDTO)
         {
-            Product product = Mapper.MaptoDomain(productDTO);
+            try
+            {
+                _requestDirector.UpdateProduct(productID, Mapper.MaptoDomain(productDTO));
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
 
-            return Ok(_requestDirector.UpdateProduct(productID, product));
+            return StatusCode(204);
         }
 
         [HttpDelete("{productID}")]
         [Consumes("application/json")]
-        public IActionResult Delete(int productID)
+        public IActionResult Delete(string productID)
         {
-            _requestDirector.DeleteProduct(productID);
-            return NoContent();
+            try
+            {
+                _requestDirector.DeleteProduct(productID);
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
+
+            return StatusCode(204);
         }
     }
 }

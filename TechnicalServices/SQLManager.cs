@@ -237,7 +237,7 @@ namespace LudyCakeShop.TechnicalServices
             catch (Exception)
             {
                 sqlDatasourceTransaction.Rollback();
-                throw; // TODO: Create a custom DAOException OR Keep this (rethrow while preserving stack info) and handle in Specific Manager or Services
+                throw;
             }
             finally
             {

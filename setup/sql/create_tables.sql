@@ -2,7 +2,7 @@ use ludycakeshop
 
 CREATE TABLE Category
 (
-	CategoryID INT NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
+	CategoryID VARCHAR(36) NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
 	CategoryName VARCHAR(30) NOT NULL,
 	Description VARCHAR(255) NULL, 
 	CategoryImage Image Null
@@ -11,14 +11,14 @@ CREATE TABLE Category
 
 CREATE TABLE Product
 (
-	ProductID INT IDENTITY (1,1) NOT NULL CONSTRAINT PK_Product_ProductID PRIMARY KEY,
+	ProductID VARCHAR(36) NOT NULL CONSTRAINT PK_Product_ProductID PRIMARY KEY,
 	ProductName VARCHAR(25) NOT NULL,
 	ProductDescription VARCHAR(200) NULL,
 	QuantityAvailable INT NOT NULL,
 	UnitPrice MONEY NOT NULL,
 	Discontinued BIT NOT NULL CONSTRAINT DK_Product_Discontinued DEFAULT(0),
 	QuantityPerUnit VARCHAR(30) NULL,
-	CategoryID INT NOT NULL CONSTRAINT FK_Product_CategoryID REFERENCES Category(CategoryID),
+	CategoryID VARCHAR(36) NOT NULL CONSTRAINT FK_Product_CategoryID REFERENCES Category(CategoryID),
 	ProductImageID INT NULL CONSTRAINT FK_Product_ProductImageID REFERENCES ProductImage(ProductImageID),
 )
 
@@ -53,7 +53,7 @@ CREATE TABLE Orders
 CREATE TABLE OrderItem
 (	
 	OrderID VARCHAR(36) NOT NULL CONSTRAINT FK_OrderItem_OrderID REFERENCES Orders(OrderID),
-	ProductID INT NOT NULL CONSTRAINT FK_OrderItem_ProductID REFERENCES Product(ProductID),
+	ProductID VARCHAR(36) NOT NULL CONSTRAINT FK_OrderItem_ProductID REFERENCES Product(ProductID),
 	ItemQuantity INT NOT NULL,
 	ItemTotal MONEY NOT NULL,
 	CONSTRAINT PK_OrderItems PRIMARY KEY (OrderID, ProductID)
@@ -70,20 +70,20 @@ CREATE TABLE UserAccount
  INSERT INTO Category
 	(CategoryID,CategoryName)
  VALUES
-	(1,'Cakes')
+	('23165650-6f81-4c7e-b25f-5b77646ec7b2','Cakes')
 
  INSERT INTO Category
 	(CategoryID,CategoryName)
  VALUES
-	(2,'Breads')
+	('34565650-6f81-4c7e-b25f-5b77646ec7a2','Breads')
 
 
 INSERT INTO Product
-	(ProductName,QuantityAvailable,UnitPrice,CategoryID)
+	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
 	VALUES
-	('Pandesal',40,4.56,2)
+	('45265650-3f63-4c7e-b25f-5b77646eb3a2','Pandesal',40,4.56,'34565650-6f81-4c7e-b25f-5b77646ec7a2')
 INSERT INTO Product
-	(ProductName,QuantityAvailable,UnitPrice,CategoryID)
+	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
 	VALUES
-	('Carrot Cake',2,11,1)
+	('23455450-5d63-5d7f-a25f-3b77646eb3c5','Carrot Cake',2,11,'23165650-6f81-4c7e-b25f-5b77646ec7b2')
 

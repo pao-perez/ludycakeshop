@@ -1,7 +1,7 @@
 /*
 	Get Product
 */
-CREATE PROCEDURE GetProduct(@ProductID INT = NULL)
+CREATE PROCEDURE GetProduct(@ProductID VARCHAR(36) = NULL)
 AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = 1

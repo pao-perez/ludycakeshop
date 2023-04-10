@@ -3,7 +3,7 @@
 */
 CREATE PROCEDURE UpdateOrderItem(
 							@OrderID VARCHAR(36) = NULL,
-							@ProductID INT = NULL,
+							@ProductID VARCHAR(36) = NULL,
 							@ItemQuantity INT = NULL,
 							@ItemTotal MONEY = NULL)
 AS

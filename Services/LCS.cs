@@ -18,17 +18,17 @@ namespace LudyCakeShop.Services
             _orderManager = new();
         }
 
-        public bool CreateProduct(Product product)
+        public string CreateProduct(Product product)
         {
             return _productManager.CreateProduct(product);
         }
 
-        public bool UpdateProduct(int productID, Product product)
+        public bool UpdateProduct(string productID, Product product)
         {
             return _productManager.UpdateProduct(productID, product);
         }
 
-        public Product GetProduct(int id)
+        public Product GetProduct(string id)
         {
             return _productManager.GetProduct(id);
         }
@@ -38,7 +38,7 @@ namespace LudyCakeShop.Services
             return (List<Product>)_productManager.GetProducts();
         }
 
-        public bool DeleteProduct(int id)
+        public bool DeleteProduct(string id)
         {
             return _productManager.DeleteProduct(id);
         }

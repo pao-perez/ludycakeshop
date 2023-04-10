@@ -2,7 +2,7 @@
 	Discontinue Product
 */
 CREATE PROCEDURE DiscontinueProduct(
-							@ProductID INT = NULL)
+							@ProductID VARCHAR(36) = NULL)
 AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = -1
