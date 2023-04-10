@@ -13,8 +13,6 @@ AS
 		RAISERROR('UpdateCategory - required parameter: @CategoryID',16,1)
 	ELSE IF @CategoryName IS NULL
 		RAISERROR('UpdateCategory - required parameter: @CategoryName',16,1)
-	ELSE IF @CategoryDescription IS NULL
-		RAISERROR('UpdateCategory - required parameter: @CategoryDescription',16,1)
 	ELSE
 		BEGIN
 			UPDATE Category

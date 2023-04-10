@@ -13,8 +13,6 @@ AS
 		RAISERROR('CreateCategory - required parameter: @CategoryID',16,1)
 	ELSE IF @CategoryName IS NULL
 		RAISERROR('CreateCategory - required parameter: @CategoryName',16,1)
-	ELSE IF @CategoryDescription IS NULL
-		RAISERROR('CreateCategory - required parameter: @CategoryDescription',16,1)
 	ELSE
 		BEGIN
 			INSERT INTO Category(CategoryID,CategoryName,CategoryDescription,CategoryImage)
