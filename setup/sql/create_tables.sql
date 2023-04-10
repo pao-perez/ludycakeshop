@@ -11,7 +11,7 @@ CREATE TABLE Category
 
 CREATE TABLE Product
 (
-	ProductID INT NOT NULL CONSTRAINT PK_Product_ProductID PRIMARY KEY,
+	ProductID INT IDENTITY (1,1) NOT NULL CONSTRAINT PK_Product_ProductID PRIMARY KEY,
 	ProductName VARCHAR(25) NOT NULL,
 	ProductDescription VARCHAR(200) NULL,
 	QuantityAvailable INT NOT NULL,
@@ -79,35 +79,11 @@ CREATE TABLE UserAccount
 
 
 INSERT INTO Product
-	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
+	(ProductName,QuantityAvailable,UnitPrice,CategoryID)
 	VALUES
-	(1,'Pandesal',40,4.56,2)
+	('Pandesal',40,4.56,2)
 INSERT INTO Product
-	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
+	(ProductName,QuantityAvailable,UnitPrice,CategoryID)
 	VALUES
-	(2,'Carrot Cake',2,11,1)
-
-
-INSERT INTO Orders
-	(OrderNumber,GST,SubTotal,SaleTotal,CustomerName,CustomerContactNumber)
-	VALUES
-	(1,.5,9.12,9.17,'John Doe',8245559238)
-INSERT INTO OrderItem
-	(OrderNumber,ProductID,ItemQuantity,ItemTotal)
-	VALUES
-	(1,1,2,9.12)
-
-
-INSERT INTO Orders
-	(OrderNumber,GST,SubTotal,SaleTotal,CustomerName,CustomerContactNumber)
-	VALUES
-	(2,1.03,20.12,21.15,'Mary Jane',8254449452)
-INSERT INTO OrderItem
-	(OrderNumber,ProductID,ItemQuantity,ItemTotal)
-	VALUES
-	(2,1,2,9.12)
-INSERT INTO OrderItem
-	(OrderNumber,ProductID,ItemQuantity,ItemTotal)
-	VALUES
-	(2,2,1,11)
+	('Carrot Cake',2,11,1)
 

@@ -10,6 +10,7 @@ AS
 	BEGIN
 		SELECT ProductID,ProductName,ProductDescription,QuantityAvailable,UnitPrice,Discontinued,QuantityPerUnit,CategoryID,ProductImageID
 		FROM Product
+		WHERE Discontinued=0
 
 		IF @@ERROR = 0
 			SET @ReturnCode = 0
