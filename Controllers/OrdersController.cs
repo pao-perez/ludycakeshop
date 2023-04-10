@@ -1,6 +1,7 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 
 namespace LudyCakeShop.Controllers
@@ -18,40 +19,77 @@ namespace LudyCakeShop.Controllers
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            IEnumerable<OrderDTO> ordersDTO = Mapper.MaptoDTOs(_requestDirector.GetOrders());
-            
-            return Ok(ordersDTO);
+            IEnumerable<Order> orders;
+            try
+            {
+                orders = _requestDirector.GetOrders();
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
+
+            IEnumerable<OrderDTO> ordersDTO = Mapper.MaptoDTOs(orders);
+            return StatusCode(200, ordersDTO);
         }
 
         [HttpGet("{orderID}")]
         [Produces("application/json")]
         public IActionResult GetByID(string orderID)
         {
-            OrderDTO orderDTO = Mapper.MaptoDTO(_requestDirector.GetOrder(orderID));
+            Order order;
+            try
+            {
+                order = _requestDirector.GetOrder(orderID);
+            } catch(Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
+            if (order == null)
+            {
+                return StatusCode(404, "OrderID not found.");
+            }
 
-            return Ok(orderDTO);
+            OrderDTO orderDTO = Mapper.MaptoDTO(order);
+            return StatusCode(200, orderDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Post(OrderDTO orderDTO)
         {
-            Order order = Mapper.MaptoDomain(orderDTO);
-            string orderID = _requestDirector.CreateOrder(order);
+            string orderID;
+            try
+            {
+                orderID = _requestDirector.CreateOrder(Mapper.MaptoDomain(orderDTO));
+            } catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
+
             string path = HttpContext.Request.Path;
             string createdURI = path + "/" + orderID;
-
-            return Created(createdURI, orderID);
+            return StatusCode(201, createdURI);
         }
 
         [HttpPut("{orderID}")]
         [Consumes("application/json")]
         public IActionResult Put(string orderID, OrderDTO ordersDTO)
         {
-            Order order = Mapper.MaptoDomain(ordersDTO);
-            _requestDirector.UpdateOrder(orderID, order);
+            try
+            {
+                _requestDirector.UpdateOrder(orderID, Mapper.MaptoDomain(ordersDTO));
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
 
-            return NoContent();
+            return StatusCode(204);
         }
     }
 }

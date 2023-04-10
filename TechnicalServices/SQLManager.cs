@@ -72,26 +72,27 @@ namespace LudyCakeShop.TechnicalServices
 
             SqlDataReader dataReader = command.ExecuteReader();
 
-            T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
-            if (dataReader.HasRows)
+            if (!dataReader.HasRows)
             {
-                PropertyInfo prop;
-                List<PropertyInfo> props = new();
+                return default;
+            }
+            T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
+            PropertyInfo prop;
+            List<PropertyInfo> props = new();
+            for (int index = 0; index < dataReader.FieldCount; index++)
+            {
+                prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
+                props.Add(prop);
+            }
+            while (dataReader.Read())
+            {
                 for (int index = 0; index < dataReader.FieldCount; index++)
                 {
-                    prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
-                    props.Add(prop);
-                }
-                while (dataReader.Read())
-                {
-                    for (int index = 0; index < dataReader.FieldCount; index++)
+                    PropertyInfo storedProp = props[index];
+                    var val = dataReader[index];
+                    if (storedProp != null && val != DBNull.Value)
                     {
-                        PropertyInfo storedProp = props[index];
-                        var val = dataReader[index];
-                        if (storedProp != null && val != DBNull.Value)
-                        {
-                            storedProp.SetValue(obj, val);
-                        }
+                        storedProp.SetValue(obj, val);
                     }
                 }
             }
@@ -168,7 +169,6 @@ namespace LudyCakeShop.TechnicalServices
 
                 return command;
             });
-
 
             try
             {

@@ -79,7 +79,10 @@ namespace LudyCakeShop.TechnicalServices
             };
 
             Order order = sqlManager.Select<Order>(datasourceParameter);
-            order.OrderItems = GetOrderItems(order.OrderID);
+            if (order != null)
+            {
+                order.OrderItems = GetOrderItems(order.OrderID);
+            }
             return order;
         }
 
@@ -122,9 +125,9 @@ namespace LudyCakeShop.TechnicalServices
                 });
             }
 
-            bool success = sqlManager.UpsertTransaction(datasourceParameters);
+            sqlManager.UpsertTransaction(datasourceParameters);
 
-            return success ? orderID : null;
+            return orderID;
         }
 
         public bool UpdateOrder(string orderID, Order order)
