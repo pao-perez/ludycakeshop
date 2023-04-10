@@ -11,17 +11,16 @@ namespace LudyCakeShop.TechnicalServices
 {
     public class SQLManager
     {
-        private readonly SqlConnection _sqlDatasourceConnection;
+        private readonly string _sqlConnectionString;
+        private readonly string settingFile = "appsettings.json";
+
         public SQLManager()
         {
             ConfigurationBuilder DatabaseUsersBuilder = new();
             DatabaseUsersBuilder.SetBasePath(Directory.GetCurrentDirectory());
-            DatabaseUsersBuilder.AddJsonFile("appsettings.json");
+            DatabaseUsersBuilder.AddJsonFile(settingFile);
             IConfiguration DatabaseUsersConfiguration = DatabaseUsersBuilder.Build();
-
-            _sqlDatasourceConnection = new();
-            _sqlDatasourceConnection.ConnectionString =
-            DatabaseUsersConfiguration.GetConnectionString("SQLServerConn");
+            _sqlConnectionString = DatabaseUsersConfiguration.GetConnectionString("SQLServer");
         }
 
         private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure)
@@ -60,9 +59,11 @@ namespace LudyCakeShop.TechnicalServices
 
         public T Select<T>(DatasourceParameter datasourceParameter)
         {
-            _sqlDatasourceConnection.Open();
+            SqlConnection sqlConnection = new();
+            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.Open();
 
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure);
+            SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
 
             foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
             {
@@ -96,16 +97,18 @@ namespace LudyCakeShop.TechnicalServices
             }
 
             dataReader.Close();
-            _sqlDatasourceConnection.Close();
+            sqlConnection.Close();
 
             return obj;
         }
 
         public IEnumerable<T> SelectAll<T>(DatasourceParameter datasourceParameter)
         {
-            _sqlDatasourceConnection.Open();
+            SqlConnection sqlConnection = new();
+            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.Open();
 
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure);
+            SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
 
             foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
             {
@@ -141,7 +144,7 @@ namespace LudyCakeShop.TechnicalServices
             }
 
             dataReader.Close();
-            _sqlDatasourceConnection.Close();
+            sqlConnection.Close();
 
             return objects;
         }
@@ -149,12 +152,14 @@ namespace LudyCakeShop.TechnicalServices
         public bool Delete(IEnumerable<DatasourceParameter> datasourceParameters)
         {
             bool success = false;
-            _sqlDatasourceConnection.Open();
-            SqlTransaction sqlDatasourceTransaction = _sqlDatasourceConnection.BeginTransaction();
+            SqlConnection sqlConnection = new();
+            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.Open();
+            SqlTransaction sqlDatasourceTransaction = sqlConnection.BeginTransaction();
 
             IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
             {
-                SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+                SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
 
                 foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
                 {
@@ -180,7 +185,7 @@ namespace LudyCakeShop.TechnicalServices
             }
             finally
             {
-                _sqlDatasourceConnection.Close();
+                sqlConnection.Close();
             }
 
             return success;
@@ -189,25 +194,29 @@ namespace LudyCakeShop.TechnicalServices
         public bool DeleteAll(string storedProcedure)
         {
             bool success;
-            _sqlDatasourceConnection.Open();
+            SqlConnection sqlConnection = new();
+            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.Open();
 
-            SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, storedProcedure);
+            SqlCommand command = CreateSqlCommand(sqlConnection, storedProcedure);
 
             success = command.ExecuteNonQuery() > 0;
 
-            _sqlDatasourceConnection.Close();
+            sqlConnection.Close();
             return success;
         }
 
         public bool UpsertTransaction(IEnumerable<DatasourceParameter> datasourceParameters)
         {
             bool success = true;
-            _sqlDatasourceConnection.Open();
-            SqlTransaction sqlDatasourceTransaction = _sqlDatasourceConnection.BeginTransaction();
+            SqlConnection sqlConnection = new();
+            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.Open();
+            SqlTransaction sqlDatasourceTransaction = sqlConnection.BeginTransaction();
 
             IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
             {
-                SqlCommand command = CreateSqlCommand(_sqlDatasourceConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+                SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
 
                 foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
                 {
@@ -232,9 +241,24 @@ namespace LudyCakeShop.TechnicalServices
             }
             finally
             {
-                _sqlDatasourceConnection.Close();
+                sqlConnection.Close();
             }
 
+            return success;
+        }
+
+        public bool ExecuteSingleNonQuery(string storedProcedure)
+        {
+            bool success;
+            SqlConnection sqlConnection = new();
+            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.Open();
+
+            SqlCommand command = CreateSqlCommand(sqlConnection, storedProcedure);
+
+            success = command.ExecuteNonQuery() > 0;
+
+            sqlConnection.Close();
             return success;
         }
     }

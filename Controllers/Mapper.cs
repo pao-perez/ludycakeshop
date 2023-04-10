@@ -17,7 +17,7 @@ namespace LudyCakeShop.Controllers
         public static OrderItem MaptoDomain(OrderItemDTO orderItemDTO)
         {
             OrderItem orderItem = new();
-            orderItem.OrderNumber = orderItemDTO.OrderNumber;
+            orderItem.OrderID = orderItemDTO.OrderID;
             orderItem.ProductID = orderItemDTO.ProductID;
             orderItem.ItemTotal = orderItemDTO.ItemTotal;
             orderItem.ItemQuantity = orderItemDTO.ItemQuantity;
@@ -28,7 +28,7 @@ namespace LudyCakeShop.Controllers
         public static OrderItemDTO MaptoDTO(OrderItem orderItem)
         {
             OrderItemDTO orderItemDTO = new();
-            orderItemDTO.OrderNumber = orderItem.OrderNumber;
+            orderItemDTO.OrderID = orderItem.OrderID;
             orderItemDTO.ProductID = orderItem.ProductID;
             orderItemDTO.ItemTotal = orderItem.ItemTotal;
             orderItemDTO.ItemQuantity = orderItem.ItemQuantity;
@@ -39,6 +39,7 @@ namespace LudyCakeShop.Controllers
         public static OrderDTO MaptoDTO(Order order)
         {
             OrderDTO orderDTO = new();
+            orderDTO.OrderID = order.OrderID;
             orderDTO.OrderNumber = order.OrderNumber;
             orderDTO.InvoiceNumber = order.InvoiceNumber;
             orderDTO.OrderDate = order.OrderDate;
@@ -59,6 +60,7 @@ namespace LudyCakeShop.Controllers
         public static Order MaptoDomain(OrderDTO orderDTO)
         {
             Order order = new();
+            order.OrderID = orderDTO.OrderID;
             order.OrderNumber = orderDTO.OrderNumber;
             order.InvoiceNumber = orderDTO.InvoiceNumber;
             order.OrderDate = orderDTO.OrderDate;

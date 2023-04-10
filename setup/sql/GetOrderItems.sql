@@ -8,7 +8,7 @@ AS
 
 	BEGIN
 		SELECT 
-			OrderNumber,
+			OrderID,
 			ProductID,
 			ItemQuantity,
 			ItemTotal

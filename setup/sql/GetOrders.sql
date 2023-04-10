@@ -9,6 +9,7 @@ AS
 
 	BEGIN
 		SELECT 
+			OrderID,
 			OrderNumber,
 			InvoiceNumber,
 			OrderDate,
@@ -32,3 +33,5 @@ AS
 RETURN @ReturnCode
 
 GRANT EXECUTE ON GetOrders TO aspnetcore
+
+DROP PROCEDURE GetOrders

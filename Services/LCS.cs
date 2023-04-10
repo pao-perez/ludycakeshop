@@ -43,14 +43,15 @@ namespace LudyCakeShop.Services
             return _productManager.DeleteProduct(id);
         }
 
-        public bool CreateOrder(Order order)
+        public string CreateOrder(Order order)
         {
+            //TODO: compute subTotal, saleTotal, and GST
             return _orderManager.CreateOrder(order);
         }
 
-        public bool UpdateOrder(int orderNumber, Order order)
+        public bool UpdateOrder(string orderID, Order order)
         {
-            return _orderManager.UpdateOrder(orderNumber, order);
+            return _orderManager.UpdateOrder(orderID, order);
         }
 
         public IEnumerable<Order> GetOrders()
@@ -58,9 +59,9 @@ namespace LudyCakeShop.Services
             return (List<Order>)_orderManager.GetOrders();
         }
 
-        public Order GetOrder(int orderNumber)
+        public Order GetOrder(string orderID)
         {
-            return _orderManager.GetOrder(orderNumber);
+            return _orderManager.GetOrder(orderID);
         }
     }
 }

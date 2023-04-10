@@ -33,7 +33,8 @@ CREATE TABLE ProductImage
 
 CREATE TABLE Orders
 (
-	OrderNumber INT NOT NULL CONSTRAINT PK_Orders_OrderNumber PRIMARY KEY,
+	OrderID VARCHAR(36) NOT NULL CONSTRAINT PK_Orders_OrderID PRIMARY KEY,
+	OrderNumber INT NOT NULL CONSTRAINT DF_Orders_OrderNumber DEFAULT (FLOOR(RAND() * (1000000-100 + 1)) + 100),
 	InvoiceNumber INT NULL,
 	OrderDate DATETIME NOT NULL CONSTRAINT DK_Orders_OrderDate DEFAULT(GETDATE()),
 	OrderStatus VARCHAR(20) NOT NULL CONSTRAINT DK_Orders_OrderStatus DEFAULT 'Submitted',
@@ -48,13 +49,14 @@ CREATE TABLE Orders
 )
 --Add types of Order status
 
+
 CREATE TABLE OrderItem
 (	
-	OrderNumber INT NOT NULL CONSTRAINT FK_OrderItem_OrderNumber REFERENCES Orders(OrderNumber),
+	OrderID VARCHAR(36) NOT NULL CONSTRAINT FK_OrderItem_OrderID REFERENCES Orders(OrderID),
 	ProductID INT NOT NULL CONSTRAINT FK_OrderItem_ProductID REFERENCES Product(ProductID),
 	ItemQuantity INT NOT NULL,
 	ItemTotal MONEY NOT NULL,
-	CONSTRAINT PK_OrderItems PRIMARY KEY (OrderNumber, ProductID)
+	CONSTRAINT PK_OrderItems PRIMARY KEY (OrderID, ProductID)
 )
 
 
@@ -108,5 +110,4 @@ INSERT INTO OrderItem
 	(OrderNumber,ProductID,ItemQuantity,ItemTotal)
 	VALUES
 	(2,2,1,11)
-
 

@@ -1,18 +1,18 @@
 /*
 	Get Order
 */
-CREATE PROCEDURE GetOrder(@OrderNumber INT = NULL)
+CREATE PROCEDURE GetOrder(@OrderID VARCHAR(36) = NULL)
 AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = 1
 
-	IF @OrderNumber IS NULL
-		RAISERROR('GetOrder - Required parameter: @OrderNumber',16,1)
+	IF @OrderID IS NULL
+		RAISERROR('GetOrder - Required parameter: @OrderID',16,1)
 	ELSE
 		BEGIN
-			SELECT OrderNumber,InvoiceNumber,OrderDate,OrderStatus,GST,SubTotal,SaleTotal,CustomerName,CustomerAddress,CustomerEmail,CustomerContactNumber,Note
+			SELECT OrderID,OrderNumber,InvoiceNumber,OrderDate,OrderStatus,GST,SubTotal,SaleTotal,CustomerName,CustomerAddress,CustomerEmail,CustomerContactNumber,Note
 			FROM Orders
-			WHERE OrderNumber = @OrderNumber
+			WHERE OrderID = @OrderID
 
 			IF @@ERROR = 0
 				SET @ReturnCode = 0

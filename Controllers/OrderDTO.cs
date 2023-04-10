@@ -5,6 +5,7 @@ namespace LudyCakeShop.Controllers
 {
     public class OrderDTO
     {
+        public string OrderID { get; set; }
         public int OrderNumber { get; set; }
         public int InvoiceNumber { get; set; }
         public DateTime OrderDate { get; set; }

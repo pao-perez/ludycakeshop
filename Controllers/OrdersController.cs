@@ -23,11 +23,11 @@ namespace LudyCakeShop.Controllers
             return Ok(ordersDTO);
         }
 
-        [HttpGet("{orderNumber}")]
+        [HttpGet("{orderID}")]
         [Produces("application/json")]
-        public IActionResult GetByID(int orderNumber)
+        public IActionResult GetByID(string orderID)
         {
-            OrderDTO orderDTO = Mapper.MaptoDTO(_requestDirector.GetOrder(orderNumber));
+            OrderDTO orderDTO = Mapper.MaptoDTO(_requestDirector.GetOrder(orderID));
 
             return Ok(orderDTO);
         }
@@ -37,18 +37,21 @@ namespace LudyCakeShop.Controllers
         public IActionResult Post(OrderDTO orderDTO)
         {
             Order order = Mapper.MaptoDomain(orderDTO);
+            string orderID = _requestDirector.CreateOrder(order);
+            string path = HttpContext.Request.Path;
+            string createdURI = path + "/" + orderID;
 
-            // TODO: Change Ok to Created
-            return Ok(_requestDirector.CreateOrder(order));
+            return Created(createdURI, orderID);
         }
 
-        [HttpPut("{orderNumber}")]
+        [HttpPut("{orderID}")]
         [Consumes("application/json")]
-        public IActionResult Put(int orderNumber, OrderDTO ordersDTO)
+        public IActionResult Put(string orderID, OrderDTO ordersDTO)
         {
             Order order = Mapper.MaptoDomain(ordersDTO);
+            _requestDirector.UpdateOrder(orderID, order);
 
-            return Ok(_requestDirector.UpdateOrder(orderNumber, order));
+            return NoContent();
         }
     }
 }
