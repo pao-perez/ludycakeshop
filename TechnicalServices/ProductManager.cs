@@ -47,7 +47,7 @@ namespace LudyCakeShop.TechnicalServices
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Discontinued", ParameterSqlDbType = SqlDbType.Bit, ParameterValue = product.Discontinued });
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityPerUnit", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityPerUnit });
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.CategoryID });
-            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
+            //createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "CreateProduct",
@@ -60,8 +60,9 @@ namespace LudyCakeShop.TechnicalServices
         public bool UpdateProduct(int productID, Product product)
         {
             SQLManager sqlManager = new();
-
             List<DatasourceParameter> datasourceParameters = new();
+
+            //TODO: check if product ID exists in any "active" order
             List<StoredProcedureParameter> createProductStoredProcedureParameters = new();
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = productID });
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.ProductName });
@@ -71,7 +72,7 @@ namespace LudyCakeShop.TechnicalServices
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Discontinued", ParameterSqlDbType = SqlDbType.Bit, ParameterValue = product.Discontinued });
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityPerUnit", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityPerUnit });
             createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.CategoryID });
-            createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
+            //createProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "UpdateProduct",
@@ -84,17 +85,18 @@ namespace LudyCakeShop.TechnicalServices
         public bool DeleteProduct(int id)
         {
             SQLManager sqlManager = new();
-            //TODO: check if product ID exists in any "active" order
             List<DatasourceParameter> datasourceParameters = new();
-            List<StoredProcedureParameter> deleteProductStoredProcedureParameters = new();
-            deleteProductStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = id });
+
+            //TODO: check if product ID exists in any "active" order
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = id });
             datasourceParameters.Add(new()
             {
-                StoredProcedure = "DeleteProduct",
-                StoredProcedureParameters = deleteProductStoredProcedureParameters
+                StoredProcedure = "DiscontinueProduct",
+                StoredProcedureParameters = storedProcedureParameters
             });
 
-            return sqlManager.Delete(datasourceParameters);
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
     }
 }
