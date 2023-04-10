@@ -1,5 +1,6 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.TechnicalServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,9 +29,9 @@ namespace LudyCakeShop.Services
             return _productManager.UpdateProduct(productID, product);
         }
 
-        public Product GetProduct(string id)
+        public Product GetProduct(string productID)
         {
-            return _productManager.GetProduct(id);
+            return _productManager.GetProduct(productID);
         }
 
         public IEnumerable<Product> GetProducts()
@@ -38,9 +39,9 @@ namespace LudyCakeShop.Services
             return (List<Product>)_productManager.GetProducts();
         }
 
-        public bool DeleteProduct(string id)
+        public bool DeleteProduct(string productID)
         {
-            return _productManager.DeleteProduct(id);
+            return _productManager.DeleteProduct(productID);
         }
 
         public string CreateOrder(Order order)
@@ -62,6 +63,39 @@ namespace LudyCakeShop.Services
         public Order GetOrder(string orderID)
         {
             return _orderManager.GetOrder(orderID);
+        }
+
+        public bool DeleteCategory(string categoryID)
+        {
+            return _categoryManager.DeleteCategory(categoryID);
+        }
+
+        public bool UpdateCategory(string categoryID, Category category)
+        {
+            return _categoryManager.UpdateCategory(categoryID, category);
+        }
+
+        public string CreateCategory(Category category)
+        {
+            return _categoryManager.CreateCategory(category);
+        }
+
+        public Category GetCategory(string categoryID)
+        {
+            return _categoryManager.GetCategory(categoryID);
+        }
+
+        public IEnumerable<Category> GetCategories()
+        {
+            return _categoryManager.GetCategories();
+        }
+
+        public Dictionary<Category, List<Product>> GetProductsByCategories()
+        {
+            IEnumerable<Category> categories = _categoryManager.GetCategories();
+            IEnumerable<Product> products = _productManager.GetProducts();
+
+            return products.GroupBy(product => product.CategoryID).ToDictionary(p => categories.Where(c => c.CategoryID == p.Key).FirstOrDefault(), p => p.ToList());
         }
     }
 }

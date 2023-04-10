@@ -20,11 +20,11 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.SelectAll<Product>(datasourceParameter);
         }
 
-        public Product GetProduct(string id)
+        public Product GetProduct(string productID)
         {
             SQLManager sqlManager = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
-            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = id });
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = productID });
             DatasourceParameter datasourceParameter = new()
             {
                 StoredProcedure = "GetProduct",
@@ -87,14 +87,14 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.UpsertTransaction(datasourceParameters);
         }
 
-        public bool DeleteProduct(string id)
+        public bool DeleteProduct(string productID)
         {
             SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
             //TODO: check if product ID exists in any "active" order
             List<StoredProcedureParameter> storedProcedureParameters = new();
-            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = id });
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = productID });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "DiscontinueProduct",

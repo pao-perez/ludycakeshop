@@ -8,7 +8,7 @@ AS
 
 
 	BEGIN
-		SELECT CategoryID,CategoryName,Description,CategoryImage
+		SELECT CategoryID,CategoryName,CategoryDescription,CategoryImage
 		FROM Category;
 
 		IF @@ERROR = 0

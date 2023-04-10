@@ -116,5 +116,34 @@ namespace LudyCakeShop.Controllers
 
             return product;
         }
+
+        public static IEnumerable<CategoryDTO> MaptoDTOs(IEnumerable<Category> categoriesList)
+        {
+            IEnumerable<CategoryDTO> categoriesDTOList = ((List<Category>)categoriesList).ConvertAll(new Converter<Category, CategoryDTO>(MaptoDTO));
+
+            return categoriesDTOList;
+        }
+
+        public static CategoryDTO MaptoDTO(Category category)
+        {
+            CategoryDTO categoryDTO = new();
+            categoryDTO.CategoryID = category.CategoryID;
+            categoryDTO.CategoryName = category.CategoryName;
+            categoryDTO.CategoryDescription = category.CategoryDescription;
+            categoryDTO.CategoryImage = category.CategoryImage;
+
+            return categoryDTO;
+        }
+
+        public static Category MaptoDomain(CategoryDTO categoryDTO)
+        {
+            Category category = new();
+            category.CategoryID = categoryDTO.CategoryID;
+            category.CategoryName = categoryDTO.CategoryName;
+            category.CategoryDescription = categoryDTO.CategoryDescription;
+            category.CategoryImage = categoryDTO.CategoryImage;
+
+            return category;
+        }
     }
 }

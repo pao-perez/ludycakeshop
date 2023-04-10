@@ -4,10 +4,9 @@ CREATE TABLE Category
 (
 	CategoryID VARCHAR(36) NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
 	CategoryName VARCHAR(30) NOT NULL,
-	Description VARCHAR(255) NULL, 
+	CategoryDescription VARCHAR(255) NULL, 
 	CategoryImage Image Null
 )
-
 
 CREATE TABLE Product
 (

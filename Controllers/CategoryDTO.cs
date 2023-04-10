@@ -1,6 +1,11 @@
-﻿namespace LudyCakeShop.Domain
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace LudyCakeShop.Controllers
 {
-    public class Category
+    public class CategoryDTO
     {
         public string CategoryID { get; set; }
         public string CategoryName { get; set; }
