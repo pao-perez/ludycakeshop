@@ -1,5 +1,6 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -16,6 +17,8 @@ namespace LudyCakeShop.Controllers
 
         [HttpGet]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetAll()
         {
             try
@@ -31,6 +34,9 @@ namespace LudyCakeShop.Controllers
 
         [HttpGet("{productID}")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Product))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetByID(string productID)
         {
             try
@@ -52,6 +58,8 @@ namespace LudyCakeShop.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Post(Product product)
         {
             try
@@ -70,6 +78,8 @@ namespace LudyCakeShop.Controllers
 
         [HttpPut("{productID}")]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Put(string productID, Product product)
         {
             try
@@ -87,6 +97,8 @@ namespace LudyCakeShop.Controllers
 
         [HttpDelete("{productID}")]
         [Consumes("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Delete(string productID)
         {
             try
