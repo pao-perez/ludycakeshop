@@ -34,6 +34,11 @@ namespace LudyCakeShop.Services
             return _productManager.GetProduct(productID);
         }
 
+        public IEnumerable<Order> GetOrdersByCustomerEmail(string customerEmail)
+        {
+            return _orderManager.GetOrdersByCustomerEmail(customerEmail);
+        }
+
         public IEnumerable<Product> GetProducts()
         {
             return (List<Product>)_productManager.GetProducts();
