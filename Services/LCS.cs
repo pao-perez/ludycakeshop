@@ -96,14 +96,6 @@ namespace LudyCakeShop.Services
             return _categoryManager.GetCategories();
         }
 
-        public Dictionary<Category, List<Product>> GetProductsByCategories()
-        {
-            IEnumerable<Category> categories = _categoryManager.GetCategories();
-            IEnumerable<Product> products = _productManager.GetProducts();
-
-            return products.GroupBy(product => product.CategoryID).ToDictionary(p => categories.Where(c => c.CategoryID == p.Key).FirstOrDefault(), p => p.ToList());
-        }
-
         public string CreateBulkOrder(BulkOrder bulkOrder)
         {
             //TODO: compute subTotal, saleTotal, and GST
