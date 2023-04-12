@@ -20,70 +20,63 @@ namespace LudyCakeShop.Controllers
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            IEnumerable<Category> categories;
             try
             {
-                categories = _requestDirector.GetCategories();
+                return StatusCode(200, _requestDirector.GetCategories());
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-            IEnumerable<CategoryDTO> categoriesDTO = Mapper.MaptoDTOs(categories);
-            return StatusCode(200, categoriesDTO);
         }
 
         [HttpGet("{categoryID}")]
         [Produces("application/json")]
         public IActionResult GetByID(string categoryID)
         {
-            Category category;
             try
             {
-                category = _requestDirector.GetCategory(categoryID);
+                Category category = _requestDirector.GetCategory(categoryID);
+                if (category == null)
+                {
+                    return StatusCode(404, "CategoryID not found.");
+                }
+
+                return StatusCode(200, category);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-            if (category == null)
-            {
-                return StatusCode(404, "CategoryID not found.");
-            }
-
-            CategoryDTO categoryDTO = Mapper.MaptoDTO(category);
-            return StatusCode(200, categoryDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult Post(CategoryDTO categoryDTO)
+        public IActionResult Post(Category category)
         {
-            string categoryID;
             try
             {
-                categoryID = _requestDirector.CreateCategory(Mapper.MaptoDomain(categoryDTO));
+                string categoryID = _requestDirector.CreateCategory(category);
+                string path = HttpContext.Request.Path;
+                string createdURI = path + "/" + categoryID;
+                return StatusCode(201, createdURI);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-
-            string path = HttpContext.Request.Path;
-            string createdURI = path + "/" + categoryID;
-            return StatusCode(201, createdURI);
         }
 
         [HttpPut("{categoryID}")]
         [Consumes("application/json")]
-        public IActionResult Put(string categoryID, CategoryDTO categoryDTO)
+        public IActionResult Put(string categoryID, Category category)
         {
             try
             {
-                _requestDirector.UpdateCategory(categoryID, Mapper.MaptoDomain(categoryDTO));
+                _requestDirector.UpdateCategory(categoryID, category);
             }
             catch (Exception)
             {

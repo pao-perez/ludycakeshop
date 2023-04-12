@@ -20,11 +20,9 @@ namespace LudyCakeShop.Controllers
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            IEnumerable<BulkOrder> bulkOrders;
             try
             {
-                bulkOrders = _requestDirector.GetBulkOrders();
-                return StatusCode(200, bulkOrders);
+                return StatusCode(200, _requestDirector.GetBulkOrders());
             }
             catch (Exception)
             {
@@ -79,13 +77,14 @@ namespace LudyCakeShop.Controllers
             try
             {
                 _requestDirector.UpdateBulkOrder(bulkOrderID, bulkOrder);
-                return StatusCode(204);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
+
+            return StatusCode(204);
         }
     }
 }

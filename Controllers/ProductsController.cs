@@ -2,7 +2,6 @@
 using LudyCakeShop.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 
 namespace LudyCakeShop.Controllers
 {
@@ -19,70 +18,63 @@ namespace LudyCakeShop.Controllers
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            IEnumerable<Product> products;
             try
             {
-                products = _requestDirector.GetProducts();
+                return StatusCode(200, _requestDirector.GetProducts());
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-            IEnumerable<ProductDTO> productsDTO = Mapper.MaptoDTOs(products);
-            return StatusCode(200, productsDTO);
         }
 
         [HttpGet("{productID}")]
         [Produces("application/json")]
         public IActionResult GetByID(string productID)
         {
-            Product product;
             try
             {
-                product = _requestDirector.GetProduct(productID);
+                Product product = _requestDirector.GetProduct(productID);
+                if (product == null)
+                {
+                    return StatusCode(404, "ProductID not found.");
+                }
+
+                return StatusCode(200, product);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-            if (product == null)
-            {
-                return StatusCode(404, "ProductID not found.");
-            }
-
-            ProductDTO productDTO = Mapper.MaptoDTO(product);
-            return StatusCode(200, productDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult Post(ProductDTO productDTO)
+        public IActionResult Post(Product product)
         {
-            string productID;
             try
             {
-                productID = _requestDirector.CreateProduct(Mapper.MaptoDomain(productDTO));
+                string productID = _requestDirector.CreateProduct(product);
+                string path = HttpContext.Request.Path;
+                string createdURI = path + "/" + productID;
+                return StatusCode(201, createdURI);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-
-            string path = HttpContext.Request.Path;
-            string createdURI = path + "/" + productID;
-            return StatusCode(201, createdURI);
         }
 
         [HttpPut("{productID}")]
         [Consumes("application/json")]
-        public IActionResult Put(string productID, ProductDTO productDTO)
+        public IActionResult Put(string productID, Product product)
         {
             try
             {
-                _requestDirector.UpdateProduct(productID, Mapper.MaptoDomain(productDTO));
+                _requestDirector.UpdateProduct(productID, product);
             }
             catch (Exception)
             {
