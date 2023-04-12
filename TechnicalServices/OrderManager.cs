@@ -110,7 +110,6 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = createOrderStoredProcedureParameters
             });
 
-            // create order items
             foreach (OrderItem orderItem in order.OrderItems)
             {
                 // TODO: check product quantity count if enough for order ItemQuantity
@@ -136,7 +135,6 @@ namespace LudyCakeShop.TechnicalServices
             SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
-            // update order
             List<StoredProcedureParameter> updateOrderStoredProcedureParameters = new();
             updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderID });
             updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerName });
@@ -155,7 +153,6 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = updateOrderStoredProcedureParameters
             });
 
-            // update order items
             foreach (OrderItem orderItem in order.OrderItems)
             {
                 // TODO: check product quantity count if enough for order ItemQuantity
@@ -167,6 +164,172 @@ namespace LudyCakeShop.TechnicalServices
                 datasourceParameters.Add(new()
                 {
                     StoredProcedure = "UpdateOrderItem",
+                    StoredProcedureParameters = orderItemStoredProcedureParameters
+                });
+            }
+
+            return sqlManager.UpsertTransaction(datasourceParameters);
+        }
+
+
+        public IEnumerable<BulkOrder> GetBulkOrders()
+        {
+            SQLManager sqlManager = new();
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetBulkOrders",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(BulkOrder)
+            };
+
+            IEnumerable<BulkOrder> resultBulkOrders = sqlManager.SelectAll<BulkOrder>(datasourceParameter);
+
+            List<BulkOrder> bulkOrders = new();
+            IEnumerable<BulkOrderItem> bulkOrderItems = GetBulkOrderItems(); // get all bulk order Items from DB
+            foreach (BulkOrder bulkOrder in resultBulkOrders)
+            {
+                bulkOrder.BulkOrderItems = bulkOrderItems.Where(bulkOrderItem => bulkOrderItem.BulkOrderID == bulkOrder.BulkOrderID);
+                bulkOrders.Add(bulkOrder);
+            }
+
+            return bulkOrders;
+        }
+
+        public IEnumerable<BulkOrderItem> GetBulkOrderItems()
+        {
+            SQLManager sqlManager = new();
+
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetBulkOrderItems",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(BulkOrderItem)
+            };
+
+            return sqlManager.SelectAll<BulkOrderItem>(datasourceParameter);
+        }
+
+        public IEnumerable<BulkOrderItem> GetBulkOrderItems(string bulkOrderID)
+        {
+            SQLManager sqlManager = new();
+
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetBulkOrderItemsByBulkOrderID",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(BulkOrderItem)
+            };
+
+            return sqlManager.SelectAll<BulkOrderItem>(datasourceParameter);
+        }
+
+        public BulkOrder GetBulkOrder(string bulkOrderID)
+        {
+            SQLManager sqlManager = new();
+            List<StoredProcedureParameter> storedProcedureParameters = new();
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+
+            DatasourceParameter datasourceParameter = new()
+            {
+                StoredProcedure = "GetBulkOrder",
+                StoredProcedureParameters = storedProcedureParameters,
+                ClassType = typeof(BulkOrder)
+            };
+
+            BulkOrder bulkOrder = sqlManager.Select<BulkOrder>(datasourceParameter);
+            if (bulkOrder != null)
+            {
+                bulkOrder.BulkOrderItems = GetBulkOrderItems(bulkOrder.BulkOrderID);
+            }
+            return bulkOrder;
+        }
+
+        public string CreateBulkOrder(BulkOrder bulkOrder)
+        {
+            SQLManager sqlManager = new();
+            List<DatasourceParameter> datasourceParameters = new();
+
+            var bulkOrderID = Guid.NewGuid().ToString();
+            List<StoredProcedureParameter> createOrderStoredProcedureParameters = new();
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyName });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyAddress", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyAddress });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyEmail });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyContactNumber", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyContactNumber });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyContactPerson", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyContactPerson });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderStatus", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.BulkOrderStatus });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@GST", ParameterSqlDbType = SqlDbType.Money, ParameterValue = bulkOrder.GST });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SubTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = bulkOrder.SubTotal });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SaleTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = bulkOrder.SaleTotal });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@InvoiceNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = bulkOrder.InvoiceNumber });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Note", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.Note });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "CreateBulkOrder",
+                StoredProcedureParameters = createOrderStoredProcedureParameters
+            });
+
+            foreach (BulkOrderItem bulkOrderItem in bulkOrder.BulkOrderItems)
+            {
+                // TODO: check product quantity count if enough for order ItemQuantity
+                List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderItem.ProductID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemQuantity", ParameterSqlDbType = SqlDbType.Int, ParameterValue = bulkOrderItem.ItemQuantity });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemTotal", ParameterSqlDbType = SqlDbType.Decimal, ParameterValue = bulkOrderItem.ItemTotal });
+                datasourceParameters.Add(new()
+                {
+                    StoredProcedure = "CreateBulkOrderItem",
+                    StoredProcedureParameters = orderItemStoredProcedureParameters
+                });
+            }
+
+            sqlManager.UpsertTransaction(datasourceParameters);
+
+            return bulkOrderID;
+        }
+
+        public bool UpdateBulkOrder(string bulkOrderID, BulkOrder bulkOrder)
+        {
+            SQLManager sqlManager = new();
+            List<DatasourceParameter> datasourceParameters = new();
+
+            List<StoredProcedureParameter> updateOrderStoredProcedureParameters = new();
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyName });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyAddress", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyAddress });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyEmail });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyContactNumber", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyContactNumber });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyContactPerson", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyContactPerson });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderStatus", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.BulkOrderStatus });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@GST", ParameterSqlDbType = SqlDbType.Money, ParameterValue = bulkOrder.GST });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SubTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = bulkOrder.SubTotal });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@SaleTotal", ParameterSqlDbType = SqlDbType.Money, ParameterValue = bulkOrder.SaleTotal });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@InvoiceNumber", ParameterSqlDbType = SqlDbType.Int, ParameterValue = bulkOrder.InvoiceNumber });
+            updateOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Note", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.Note });
+            datasourceParameters.Add(new()
+            {
+                StoredProcedure = "UpdateBulkOrder",
+                StoredProcedureParameters = updateOrderStoredProcedureParameters
+            });
+
+            foreach (BulkOrderItem bulkOrderItem in bulkOrder.BulkOrderItems)
+            {
+                // TODO: check product quantity count if enough for order ItemQuantity
+                List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderItem.ProductID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemQuantity", ParameterSqlDbType = SqlDbType.Int, ParameterValue = bulkOrderItem.ItemQuantity });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemTotal", ParameterSqlDbType = SqlDbType.Decimal, ParameterValue = bulkOrderItem.ItemTotal });
+                datasourceParameters.Add(new()
+                {
+                    StoredProcedure = "UpdateBulkOrderItem",
                     StoredProcedureParameters = orderItemStoredProcedureParameters
                 });
             }

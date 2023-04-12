@@ -1,95 +1,91 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
 namespace LudyCakeShop.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class OrdersController : ControllerBase
+    [ApiController]
+    public class BulkOrdersController : ControllerBase
     {
         private readonly LCS _requestDirector;
 
-        public OrdersController() =>
+        public BulkOrdersController() =>
             _requestDirector = new();
 
         [HttpGet]
         [Produces("application/json")]
         public IActionResult GetAll()
         {
-            IEnumerable<Order> orders;
+            IEnumerable<BulkOrder> bulkOrders;
             try
             {
-                orders = _requestDirector.GetOrders();
+                bulkOrders = _requestDirector.GetBulkOrders();
+                return StatusCode(200, bulkOrders);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-
-            IEnumerable<OrderDTO> ordersDTO = Mapper.MaptoDTOs(orders);
-            return StatusCode(200, ordersDTO);
         }
 
-        [HttpGet("{orderID}")]
+        [HttpGet("{bulkOrderID}")]
         [Produces("application/json")]
-        public IActionResult GetByID(string orderID)
+        public IActionResult GetByID(string bulkOrderID)
         {
-            Order order;
             try
             {
-                order = _requestDirector.GetOrder(orderID);
-            } catch(Exception)
+                BulkOrder bulkOrder = _requestDirector.GetBulkOrder(bulkOrderID);
+                if (bulkOrder == null)
+                {
+                    return StatusCode(404, "BulkOrderID not found.");
+                }
+
+                return StatusCode(200, bulkOrder);
+            }
+            catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
-            if (order == null)
-            {
-                return StatusCode(404, "OrderID not found.");
-            }
-
-            OrderDTO orderDTO = Mapper.MaptoDTO(order);
-            return StatusCode(200, orderDTO);
         }
 
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult Post(OrderDTO orderDTO)
-        {
-            string orderID;
-            try
-            {
-                orderID = _requestDirector.CreateOrder(Mapper.MaptoDomain(orderDTO));
-            } catch (Exception)
-            {
-                // TODO: log exception
-                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
-            }
-
-            string path = HttpContext.Request.Path;
-            string createdURI = path + "/" + orderID;
-            return StatusCode(201, createdURI);
-        }
-
-        [HttpPut("{orderID}")]
-        [Consumes("application/json")]
-        public IActionResult Put(string orderID, OrderDTO ordersDTO)
+        public IActionResult Post(BulkOrder bulkOrder)
         {
             try
             {
-                _requestDirector.UpdateOrder(orderID, Mapper.MaptoDomain(ordersDTO));
+                string bulkOrderID = _requestDirector.CreateBulkOrder(bulkOrder);
+                string path = HttpContext.Request.Path;
+                string createdURI = path + "/" + bulkOrderID;
+                return StatusCode(201, createdURI);
             }
             catch (Exception)
             {
                 // TODO: log exception
                 return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
             }
+        }
 
-            return StatusCode(204);
+        [HttpPut("{bulkOrderID}")]
+        [Consumes("application/json")]
+        public IActionResult Put(string bulkOrderID, BulkOrder bulkOrder)
+        {
+            try
+            {
+                _requestDirector.UpdateBulkOrder(bulkOrderID, bulkOrder);
+                return StatusCode(204);
+            }
+            catch (Exception)
+            {
+                // TODO: log exception
+                return StatusCode(500, "Server Error. The server is unable to fulfill your request at this time.");
+            }
         }
     }
 }

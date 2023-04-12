@@ -7,7 +7,7 @@ AS
 	SET @ReturnCode = 1
 	
 	IF @OrderID IS NULL
-		RAISERROR('OrderID is required parameter: @OrderID',16,1)
+		RAISERROR('OrderID - required parameter: @OrderID',16,1)
 	ELSE
 		BEGIN
 			SELECT OrderID,ProductID,ItemQuantity,ItemTotal
@@ -17,7 +17,7 @@ AS
 			IF @@ERROR = 0
 				SET @ReturnCode = 0
 			ELSE
-				RAISERROR('GetOrderItemsByOrderID - SELECT error: OrderItems table.',16,1)
+				RAISERROR('GetOrderItemsByOrderID - SELECT error: OrderItem table.',16,1)
 		END
 
 RETURN @ReturnCode

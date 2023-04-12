@@ -98,5 +98,27 @@ namespace LudyCakeShop.Services
 
             return products.GroupBy(product => product.CategoryID).ToDictionary(p => categories.Where(c => c.CategoryID == p.Key).FirstOrDefault(), p => p.ToList());
         }
+
+        public string CreateBulkOrder(BulkOrder bulkOrder)
+        {
+            //TODO: compute subTotal, saleTotal, and GST
+            bulkOrder.BulkOrderStatus = BulkOrderStatus.SUBMITTED;
+            return _orderManager.CreateBulkOrder(bulkOrder);
+        }
+
+        public bool UpdateBulkOrder(string bulkOrderID, BulkOrder bulkOrder)
+        {
+            return _orderManager.UpdateBulkOrder(bulkOrderID, bulkOrder);
+        }
+
+        public IEnumerable<BulkOrder> GetBulkOrders()
+        {
+            return (List<BulkOrder>)_orderManager.GetBulkOrders();
+        }
+
+        public BulkOrder GetBulkOrder(string bulkOrderID)
+        {
+            return _orderManager.GetBulkOrder(bulkOrderID);
+        }
     }
 }

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 namespace LudyCakeShop.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly LCS _requestDirector;
