@@ -150,7 +150,7 @@ namespace LudyCakeShop.TechnicalServices
             return objects;
         }
 
-        public bool Delete(IEnumerable<DatasourceParameter> datasourceParameters)
+        public bool DeleteTransaction(IEnumerable<DatasourceParameter> datasourceParameters)
         {
             bool success = false;
             SqlConnection sqlConnection = new();
@@ -177,6 +177,7 @@ namespace LudyCakeShop.TechnicalServices
                     command.ExecuteNonQuery();
                 }
                 sqlDatasourceTransaction.Commit();
+                success = true;
             }
             catch (Exception)
             {
@@ -208,7 +209,7 @@ namespace LudyCakeShop.TechnicalServices
 
         public bool UpsertTransaction(IEnumerable<DatasourceParameter> datasourceParameters)
         {
-            bool success = true;
+            bool success = false;
             SqlConnection sqlConnection = new();
             sqlConnection.ConnectionString = _sqlConnectionString;
             sqlConnection.Open();
@@ -233,6 +234,7 @@ namespace LudyCakeShop.TechnicalServices
                     command.ExecuteNonQuery();
                 }
                 sqlDatasourceTransaction.Commit();
+                success = true;
             }
             catch (Exception)
             {
