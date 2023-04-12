@@ -69,7 +69,7 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            return sqlManager.Delete(datasourceParameters);
+            return sqlManager.DeleteTransaction(datasourceParameters);
         }
 
         public bool UpdateCategory(string categoryID, Category category)

@@ -10,7 +10,7 @@ AS
 		RAISERROR('GetProduct - Required parameter: @ProductID',16,1)
 	ELSE
 		BEGIN
-			SELECT ProductID,ProductName,ProductDescription,QuantityAvailable,UnitPrice,Discontinued,QuantityPerUnit,CategoryID,ProductImageID
+			SELECT ProductID,ProductName,ProductDescription,QuantityAvailable,UnitPrice,Discontinued,QuantityPerUnit,CategoryID,ProductImage
 			FROM Product
 			WHERE ProductID = @ProductID
 

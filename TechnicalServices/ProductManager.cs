@@ -50,7 +50,7 @@ namespace LudyCakeShop.TechnicalServices
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Discontinued", ParameterSqlDbType = SqlDbType.Bit, ParameterValue = product.Discontinued });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityPerUnit", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityPerUnit });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.CategoryID });
-            //storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
+            //storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImage", ParameterSqlDbType = SqlDbType.Image, ParameterValue = product.ProductImage });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "CreateProduct",
@@ -77,7 +77,7 @@ namespace LudyCakeShop.TechnicalServices
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Discontinued", ParameterSqlDbType = SqlDbType.Bit, ParameterValue = product.Discontinued });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@QuantityPerUnit", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.QuantityPerUnit });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.CategoryID });
-            //storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImageID", ParameterSqlDbType = SqlDbType.Int, ParameterValue = product.ProductImageID });
+            //storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductImage", ParameterSqlDbType = SqlDbType.Image, ParameterValue = product.ProductImage });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "UpdateProduct",

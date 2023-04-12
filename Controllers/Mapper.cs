@@ -96,7 +96,7 @@ namespace LudyCakeShop.Controllers
             productDTO.Discontinued = product.Discontinued;
             productDTO.QuantityPerUnit = product.QuantityPerUnit;
             productDTO.CategoryID = product.CategoryID;
-            productDTO.ProductImageID = product.ProductImageID;
+            productDTO.ProductImage = product.ProductImage;
 
             return productDTO;
         }
@@ -112,7 +112,7 @@ namespace LudyCakeShop.Controllers
             product.Discontinued = productDTO.Discontinued;
             product.QuantityPerUnit = productDTO.QuantityPerUnit;
             product.CategoryID = productDTO.CategoryID;
-            product.ProductImageID = productDTO.ProductImageID;
+            product.ProductImage = productDTO.ProductImage;
 
             return product;
         }

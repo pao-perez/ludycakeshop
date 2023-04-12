@@ -8,7 +8,7 @@ AS
 
 
 	BEGIN
-		SELECT ProductID,ProductName,ProductDescription,QuantityAvailable,UnitPrice,Discontinued,QuantityPerUnit,CategoryID,ProductImageID
+		SELECT ProductID,ProductName,ProductDescription,QuantityAvailable,UnitPrice,Discontinued,QuantityPerUnit,CategoryID,ProductImage
 		FROM Product
 		WHERE Discontinued=0
 

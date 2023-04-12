@@ -47,6 +47,7 @@ namespace LudyCakeShop.Services
         public string CreateOrder(Order order)
         {
             //TODO: compute subTotal, saleTotal, and GST
+            order.OrderStatus = OrderStatus.SUBMITTED;
             return _orderManager.CreateOrder(order);
         }
 

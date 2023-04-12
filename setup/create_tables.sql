@@ -1,11 +1,12 @@
 use ludycakeshop
 
+
 CREATE TABLE Category
 (
 	CategoryID VARCHAR(36) NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
 	CategoryName VARCHAR(30) NOT NULL,
 	CategoryDescription VARCHAR(255) NULL, 
-	CategoryImage Image Null
+	CategoryImage Image NULL
 )
 
 CREATE TABLE Product
@@ -18,17 +19,8 @@ CREATE TABLE Product
 	Discontinued BIT NOT NULL CONSTRAINT DK_Product_Discontinued DEFAULT(0),
 	QuantityPerUnit VARCHAR(30) NULL,
 	CategoryID VARCHAR(36) NOT NULL CONSTRAINT FK_Product_CategoryID REFERENCES Category(CategoryID),
-	ProductImageID INT NULL CONSTRAINT FK_Product_ProductImageID REFERENCES ProductImage(ProductImageID),
+	ProductImage IMAGE NULL
 )
-
-
-CREATE TABLE ProductImage
-(
-	ProductImageID INT NOT NULL CONSTRAINT PK_ProductImage_ProductImageID PRIMARY KEY,
-	ProductImage IMAGE NOT NULL,
-	DefaultImage IMAGE NULL
-)
-
 
 CREATE TABLE Orders
 (
@@ -36,7 +28,7 @@ CREATE TABLE Orders
 	OrderNumber INT NOT NULL CONSTRAINT DF_Orders_OrderNumber DEFAULT (FLOOR(RAND() * (1000000-100 + 1)) + 100),
 	InvoiceNumber INT NULL,
 	OrderDate DATETIME NOT NULL CONSTRAINT DK_Orders_OrderDate DEFAULT(GETDATE()),
-	OrderStatus VARCHAR(20) NOT NULL CONSTRAINT DK_Orders_OrderStatus DEFAULT 'Submitted',
+	OrderStatus VARCHAR(20) NOT NULL CONSTRAINT CHK_Orders_OrderStatus CHECK (OrderStatus IN ('Submitted', 'Completed', 'For-Pickup', 'Preparing')),
 	GST MONEY NOT NULL,
 	SubTotal MONEY NOT NULL,
 	SaleTotal MONEY NOT NULL,
@@ -46,8 +38,6 @@ CREATE TABLE Orders
 	CustomerContactNumber VARCHAR(20) NOT NULL,
 	Note VARCHAR(255) NULL,
 )
---Add types of Order status
-
 
 CREATE TABLE OrderItem
 (	
@@ -58,13 +48,13 @@ CREATE TABLE OrderItem
 	CONSTRAINT PK_OrderItems PRIMARY KEY (OrderID, ProductID)
 )
 
-
 CREATE TABLE UserAccount
 (
 	UserAccountID INT IDENTITY (1,1) NOT NULL CONSTRAINT PK_UserAccount_UserAccountID PRIMARY KEY,
 	Username VARCHAR(20) NOT NULL,
 	Password VARCHAR(60) NOT NULL,
 )
+
 
  INSERT INTO Category
 	(CategoryID,CategoryName)

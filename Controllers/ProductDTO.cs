@@ -10,6 +10,6 @@
         public bool Discontinued { get; set; }
         public string QuantityPerUnit { get; set; }
         public string CategoryID { get; set; }
-        public int ProductImageID { get; set; }
+        public byte[] ProductImage { get; set; }
     }
 }
