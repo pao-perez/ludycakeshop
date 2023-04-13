@@ -112,14 +112,13 @@ namespace LudyCakeShop.TechnicalServices
             return order;
         }
 
-        public string CreateOrder(Order order)
+        public bool CreateOrder(Order order)
         {
             SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
-            var orderID = Guid.NewGuid().ToString();
             List<StoredProcedureParameter> createOrderStoredProcedureParameters = new();
-            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderID });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.OrderID });
             createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerName });
             createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerAddress", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerAddress });
             createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.CustomerEmail });
@@ -140,7 +139,7 @@ namespace LudyCakeShop.TechnicalServices
             {
                 // TODO: check product quantity count if enough for order ItemQuantity
                 List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
-                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.OrderID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderItem.ProductID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemQuantity", ParameterSqlDbType = SqlDbType.Int, ParameterValue = orderItem.ItemQuantity });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemTotal", ParameterSqlDbType = SqlDbType.Decimal, ParameterValue = orderItem.ItemTotal });
@@ -151,9 +150,7 @@ namespace LudyCakeShop.TechnicalServices
                 });
             }
 
-            sqlManager.UpsertTransaction(datasourceParameters);
-
-            return orderID;
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
 
         public bool UpdateOrder(string orderID, Order order)
@@ -276,14 +273,13 @@ namespace LudyCakeShop.TechnicalServices
             return bulkOrder;
         }
 
-        public string CreateBulkOrder(BulkOrder bulkOrder)
+        public bool CreateBulkOrder(BulkOrder bulkOrder)
         {
             SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
-            var bulkOrderID = Guid.NewGuid().ToString();
             List<StoredProcedureParameter> createOrderStoredProcedureParameters = new();
-            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+            createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.BulkOrderID });
             createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyName });
             createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyAddress", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyAddress });
             createOrderStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CompanyEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.CompanyEmail });
@@ -305,7 +301,7 @@ namespace LudyCakeShop.TechnicalServices
             {
                 // TODO: check product quantity count if enough for order ItemQuantity
                 List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
-                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderID });
+                orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@BulkOrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.BulkOrderID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderItem.ProductID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemQuantity", ParameterSqlDbType = SqlDbType.Int, ParameterValue = bulkOrderItem.ItemQuantity });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ItemTotal", ParameterSqlDbType = SqlDbType.Decimal, ParameterValue = bulkOrderItem.ItemTotal });
@@ -316,9 +312,7 @@ namespace LudyCakeShop.TechnicalServices
                 });
             }
 
-            sqlManager.UpsertTransaction(datasourceParameters);
-
-            return bulkOrderID;
+            return sqlManager.UpsertTransaction(datasourceParameters);
         }
 
         public bool UpdateBulkOrder(string bulkOrderID, BulkOrder bulkOrder)

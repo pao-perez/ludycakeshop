@@ -11,12 +11,14 @@ namespace LudyCakeShop.Services
         private readonly CategoryManager _categoryManager;
         private readonly ProductManager _productManager;
         private readonly OrderManager _orderManager;
+        private readonly EmailSender _emailSender;
 
         public LCS()
         {
             _categoryManager = new();
             _productManager = new();
             _orderManager = new();
+            _emailSender = new();
         }
 
         public string CreateProduct(Product product)
@@ -53,7 +55,11 @@ namespace LudyCakeShop.Services
         {
             //TODO: compute subTotal, saleTotal, and GST
             order.OrderStatus = OrderStatus.SUBMITTED;
-            return _orderManager.CreateOrder(order);
+            order.OrderID = Guid.NewGuid().ToString();
+            _orderManager.CreateOrder(order);
+            _emailSender.SendEmail(new OrderEmailMessage(order));
+
+            return order.OrderID;
         }
 
         public bool UpdateOrder(string orderID, Order order)
@@ -100,7 +106,11 @@ namespace LudyCakeShop.Services
         {
             //TODO: compute subTotal, saleTotal, and GST
             bulkOrder.BulkOrderStatus = BulkOrderStatus.SUBMITTED;
-            return _orderManager.CreateBulkOrder(bulkOrder);
+            bulkOrder.BulkOrderID = Guid.NewGuid().ToString();
+            _orderManager.CreateBulkOrder(bulkOrder);
+            _emailSender.SendEmail(new BulkOrderEmailMessage(bulkOrder));
+
+            return bulkOrder.BulkOrderID;
         }
 
         public bool UpdateBulkOrder(string bulkOrderID, BulkOrder bulkOrder)
