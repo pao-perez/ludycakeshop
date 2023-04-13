@@ -16,11 +16,11 @@ namespace LudyCakeShop.TechnicalServices
 
         public SQLManager()
         {
-            ConfigurationBuilder DatabaseUsersBuilder = new();
-            DatabaseUsersBuilder.SetBasePath(Directory.GetCurrentDirectory());
-            DatabaseUsersBuilder.AddJsonFile(settingFile);
-            IConfiguration DatabaseUsersConfiguration = DatabaseUsersBuilder.Build();
-            _sqlConnectionString = DatabaseUsersConfiguration.GetConnectionString("SQLServer");
+            _sqlConnectionString = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile(settingFile)
+                .Build()
+                .GetConnectionString("SQLServer");
         }
 
         private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure)
@@ -246,21 +246,6 @@ namespace LudyCakeShop.TechnicalServices
                 sqlConnection.Close();
             }
 
-            return success;
-        }
-
-        public bool ExecuteSingleNonQuery(string storedProcedure)
-        {
-            bool success;
-            SqlConnection sqlConnection = new();
-            sqlConnection.ConnectionString = _sqlConnectionString;
-            sqlConnection.Open();
-
-            SqlCommand command = CreateSqlCommand(sqlConnection, storedProcedure);
-
-            success = command.ExecuteNonQuery() > 0;
-
-            sqlConnection.Close();
             return success;
         }
     }
