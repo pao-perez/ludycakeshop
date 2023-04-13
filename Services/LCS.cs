@@ -53,6 +53,7 @@ namespace LudyCakeShop.Services
 
         public string CreateOrder(Order order)
         {
+            // TODO: check product quantity count if enough for each orderItem ItemQuantity
             //TODO: compute subTotal, saleTotal, and GST
             order.OrderStatus = OrderStatus.SUBMITTED;
             order.OrderID = Guid.NewGuid().ToString();
@@ -64,6 +65,7 @@ namespace LudyCakeShop.Services
 
         public bool UpdateOrder(string orderID, Order order)
         {
+            // TODO: check product quantity count if enough for each orderItem ItemQuantity
             return _orderManager.UpdateOrder(orderID, order);
         }
 
@@ -104,6 +106,7 @@ namespace LudyCakeShop.Services
 
         public string CreateBulkOrder(BulkOrder bulkOrder)
         {
+            // TODO: check product quantity count if enough for each orderItem ItemQuantity
             //TODO: compute subTotal, saleTotal, and GST
             bulkOrder.BulkOrderStatus = BulkOrderStatus.SUBMITTED;
             bulkOrder.OrderID = Guid.NewGuid().ToString();
@@ -115,6 +118,7 @@ namespace LudyCakeShop.Services
 
         public bool UpdateBulkOrder(string orderID, BulkOrder bulkOrder)
         {
+            // TODO: check product quantity count if enough for each orderItem ItemQuantity
             return _orderManager.UpdateBulkOrder(orderID, bulkOrder);
         }
 

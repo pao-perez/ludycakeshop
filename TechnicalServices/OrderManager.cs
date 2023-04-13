@@ -49,7 +49,7 @@ namespace LudyCakeShop.TechnicalServices
             IEnumerable<Order> resultOrders = sqlManager.SelectAll<Order>(datasourceParameter);
 
             List<Order> orders = new();
-            IEnumerable<OrderItem> orderItems = GetOrderItems(); // get all order Items from DB
+            IEnumerable<OrderItem> orderItems = GetOrderItems();
             foreach (Order order in resultOrders)
             {
                 order.OrderItems = orderItems.Where(orderItem => orderItem.OrderID == order.OrderID);
@@ -137,7 +137,6 @@ namespace LudyCakeShop.TechnicalServices
 
             foreach (OrderItem orderItem in order.OrderItems)
             {
-                // TODO: check product quantity count if enough for order ItemQuantity
                 List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = order.OrderID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderItem.ProductID });
@@ -178,7 +177,6 @@ namespace LudyCakeShop.TechnicalServices
 
             foreach (OrderItem orderItem in order.OrderItems)
             {
-                // TODO: check product quantity count if enough for order ItemQuantity
                 List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderItem.ProductID });
@@ -210,7 +208,7 @@ namespace LudyCakeShop.TechnicalServices
             IEnumerable<BulkOrder> resultBulkOrders = sqlManager.SelectAll<BulkOrder>(datasourceParameter);
 
             List<BulkOrder> bulkOrders = new();
-            IEnumerable<OrderItem> bulkOrderItems = GetBulkOrderItems(); // get all bulk order Items from DB
+            IEnumerable<OrderItem> bulkOrderItems = GetBulkOrderItems();
             foreach (BulkOrder bulkOrder in resultBulkOrders)
             {
                 bulkOrder.OrderItems = bulkOrderItems.Where(bulkOrderItem => bulkOrderItem.OrderID == bulkOrder.OrderID);
@@ -299,7 +297,6 @@ namespace LudyCakeShop.TechnicalServices
 
             foreach (OrderItem bulkOrderItem in bulkOrder.OrderItems)
             {
-                // TODO: check product quantity count if enough for order ItemQuantity
                 List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrder.OrderID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderItem.ProductID });
@@ -341,7 +338,6 @@ namespace LudyCakeShop.TechnicalServices
 
             foreach (OrderItem bulkOrderItem in bulkOrder.OrderItems)
             {
-                // TODO: check product quantity count if enough for order ItemQuantity
                 List<StoredProcedureParameter> orderItemStoredProcedureParameters = new();
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@OrderID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = orderID });
                 orderItemStoredProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = bulkOrderItem.ProductID });
