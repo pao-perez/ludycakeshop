@@ -1,7 +1,7 @@
 /*
 	Create Bulk Order
 */
-CREATE PROCEDURE CreateBulkOrder(@BulkOrderID VARCHAR(36) = NULL,
+CREATE PROCEDURE CreateBulkOrder(@OrderID VARCHAR(36) = NULL,
 							@BulkOrderStatus VARCHAR(20) = NULL,
 							@InvoiceNumber BIGINT = NULL,
 							@CompanyName VARCHAR(40) = NULL,
@@ -17,8 +17,8 @@ AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = -1
 	
-	IF @BulkOrderID IS NULL
-		RAISERROR('CreateBulkOrder - required parameter: @BulkOrderID',16,1)
+	IF @OrderID IS NULL
+		RAISERROR('CreateBulkOrder - required parameter: @OrderID',16,1)
 	ELSE IF @CompanyName IS NULL
 		RAISERROR('CreateBulkOrder - required parameter: @CompanyName',16,1)
 	ELSE IF @CompanyContactNumber IS NULL
@@ -35,8 +35,8 @@ AS
 		RAISERROR('CreateBulkOrder - required parameter: @SaleTotal',16,1)
 	ELSE
 		BEGIN
-			INSERT INTO BulkOrders(BulkOrderID,CompanyName,CompanyAddress,CompanyEmail,CompanyContactNumber,CompanyContactPerson,BulkOrderStatus,GST,SubTotal,SaleTotal,InvoiceNumber,Note)
-			VALUES (@BulkOrderID,@CompanyName,@CompanyAddress,@CompanyEmail,@CompanyContactNumber,@CompanyContactPerson,@BulkOrderStatus,@GST,@SubTotal,@SaleTotal,@InvoiceNumber,@Note)
+			INSERT INTO BulkOrders(OrderID,CompanyName,CompanyAddress,CompanyEmail,CompanyContactNumber,CompanyContactPerson,BulkOrderStatus,GST,SubTotal,SaleTotal,InvoiceNumber,Note)
+			VALUES (@OrderID,@CompanyName,@CompanyAddress,@CompanyEmail,@CompanyContactNumber,@CompanyContactPerson,@BulkOrderStatus,@GST,@SubTotal,@SaleTotal,@InvoiceNumber,@Note)
 
 			IF @@ERROR = 0
 				SET @ReturnCode = 0

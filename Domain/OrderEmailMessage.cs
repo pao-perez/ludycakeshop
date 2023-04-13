@@ -5,7 +5,7 @@
         public OrderEmailMessage(Order order)
         {
             this.Subject = "New Order Received from " + order.CustomerContactNumber;
-            this.Content = $@"You have a new order. Details below: 
+            this.Content = $@"You have a new order. Details as follows: 
             Order ID: {order.OrderID}
             Customer Name: {order.CustomerName}
             Customer Contact: {order.CustomerContactNumber}

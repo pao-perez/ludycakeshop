@@ -106,16 +106,16 @@ namespace LudyCakeShop.Services
         {
             //TODO: compute subTotal, saleTotal, and GST
             bulkOrder.BulkOrderStatus = BulkOrderStatus.SUBMITTED;
-            bulkOrder.BulkOrderID = Guid.NewGuid().ToString();
+            bulkOrder.OrderID = Guid.NewGuid().ToString();
             _orderManager.CreateBulkOrder(bulkOrder);
             _emailSender.SendEmail(new BulkOrderEmailMessage(bulkOrder));
 
-            return bulkOrder.BulkOrderID;
+            return bulkOrder.OrderID;
         }
 
-        public bool UpdateBulkOrder(string bulkOrderID, BulkOrder bulkOrder)
+        public bool UpdateBulkOrder(string orderID, BulkOrder bulkOrder)
         {
-            return _orderManager.UpdateBulkOrder(bulkOrderID, bulkOrder);
+            return _orderManager.UpdateBulkOrder(orderID, bulkOrder);
         }
 
         public IEnumerable<BulkOrder> GetBulkOrders()
@@ -123,9 +123,9 @@ namespace LudyCakeShop.Services
             return (List<BulkOrder>)_orderManager.GetBulkOrders();
         }
 
-        public BulkOrder GetBulkOrder(string bulkOrderID)
+        public BulkOrder GetBulkOrder(string orderID)
         {
-            return _orderManager.GetBulkOrder(bulkOrderID);
+            return _orderManager.GetBulkOrder(orderID);
         }
     }
 }

@@ -1,20 +1,20 @@
 /*
 	Get Bulk Order
 */
-CREATE PROCEDURE GetBulkOrder(@BulkOrderID VARCHAR(36) = NULL)
+CREATE PROCEDURE GetBulkOrder(@OrderID VARCHAR(36) = NULL)
 AS
 	DECLARE @ReturnCode INT
 	SET @ReturnCode = 1
 
-	IF @BulkOrderID IS NULL
-		RAISERROR('GetBulkOrder - Required parameter: @BulkOrderID',16,1)
+	IF @OrderID IS NULL
+		RAISERROR('GetBulkOrder - Required parameter: @OrderID',16,1)
 	ELSE
 		BEGIN
 			SELECT 
-				BulkOrderID,
-				BulkOrderNumber,
+				OrderID,
+				OrderNumber,
 				InvoiceNumber,
-				BulkOrderDate,
+				OrderDate,
 				BulkOrderStatus,
 				GST,
 				SubTotal,
@@ -26,7 +26,7 @@ AS
 				CompanyContactPerson,
 				Note
 			FROM BulkOrders
-			WHERE BulkOrderID = @BulkOrderID;
+			WHERE OrderID = @OrderID;
 			
 			IF @@ERROR = 0
 				SET @ReturnCode = 0

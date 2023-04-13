@@ -33,19 +33,19 @@ namespace LudyCakeShop.Controllers
             }
         }
 
-        [HttpGet("{bulkOrderID}")]
+        [HttpGet("{orderID}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BulkOrder))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GetByID(string bulkOrderID)
+        public IActionResult GetByID(string orderID)
         {
             try
             {
-                BulkOrder bulkOrder = _requestDirector.GetBulkOrder(bulkOrderID);
+                BulkOrder bulkOrder = _requestDirector.GetBulkOrder(orderID);
                 if (bulkOrder == null)
                 {
-                    return StatusCode(404, "BulkOrderID not found.");
+                    return StatusCode(404, "OrderID not found.");
                 }
 
                 return StatusCode(200, bulkOrder);
@@ -65,9 +65,9 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                string bulkOrderID = _requestDirector.CreateBulkOrder(bulkOrder);
+                string orderID = _requestDirector.CreateBulkOrder(bulkOrder);
                 string path = HttpContext.Request.Path;
-                string createdURI = path + "/" + bulkOrderID;
+                string createdURI = path + "/" + orderID;
                 return StatusCode(201, createdURI);
             }
             catch (Exception)
@@ -77,15 +77,15 @@ namespace LudyCakeShop.Controllers
             }
         }
 
-        [HttpPut("{bulkOrderID}")]
+        [HttpPut("{orderID}")]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Put(string bulkOrderID, BulkOrder bulkOrder)
+        public IActionResult Put(string orderID, BulkOrder bulkOrder)
         {
             try
             {
-                _requestDirector.UpdateBulkOrder(bulkOrderID, bulkOrder);
+                _requestDirector.UpdateBulkOrder(orderID, bulkOrder);
             }
             catch (Exception)
             {

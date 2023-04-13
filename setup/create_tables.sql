@@ -50,10 +50,10 @@ CREATE TABLE OrderItem
 
 CREATE TABLE BulkOrders
 (
-	BulkOrderID VARCHAR(36) NOT NULL CONSTRAINT PK_BulkOrders_BulkOrderID PRIMARY KEY,
-	BulkOrderNumber INT NOT NULL CONSTRAINT DF_BulkOrders_BulkOrderNumber DEFAULT (FLOOR(RAND() * (1000000-100 + 1)) + 100),
+	OrderID VARCHAR(36) NOT NULL CONSTRAINT PK_BulkOrders_OrderID PRIMARY KEY,
+	OrderNumber INT NOT NULL CONSTRAINT DF_BulkOrders_OrderNumber DEFAULT (FLOOR(RAND() * (1000000-100 + 1)) + 100),
 	InvoiceNumber INT NULL,
-	BulkOrderDate DATETIME NOT NULL CONSTRAINT DK_BulkOrders_BulkOrderDate DEFAULT(GETDATE()),
+	OrderDate DATETIME NOT NULL CONSTRAINT DK_BulkOrders_OrderDate DEFAULT(GETDATE()),
 	BulkOrderStatus VARCHAR(20) NOT NULL CONSTRAINT CHK_BulkOrders_BulkOrderStatus CHECK (BulkOrderStatus IN ('Submitted', 'Completed', 'Processing')),
 	GST MONEY NOT NULL,
 	SubTotal MONEY NOT NULL,
@@ -68,11 +68,11 @@ CREATE TABLE BulkOrders
 
 CREATE TABLE BulkOrderItem
 (	
-	BulkOrderID VARCHAR(36) NOT NULL CONSTRAINT FK_BulkOrderItem_BulkOrderID REFERENCES BulkOrders(BulkOrderID),
+	OrderID VARCHAR(36) NOT NULL CONSTRAINT FK_BulkOrderItem_OrderID REFERENCES BulkOrders(OrderID),
 	ProductID VARCHAR(36) NOT NULL CONSTRAINT FK_BulkOrderItem_ProductID REFERENCES Product(ProductID),
 	ItemQuantity INT NOT NULL,
 	ItemTotal MONEY NOT NULL,
-	CONSTRAINT PK_BulkOrderItem PRIMARY KEY (BulkOrderID, ProductID)
+	CONSTRAINT PK_BulkOrderItem PRIMARY KEY (OrderID, ProductID)
 )
 
 CREATE TABLE UserAccount

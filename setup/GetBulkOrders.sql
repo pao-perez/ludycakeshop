@@ -8,10 +8,10 @@ AS
 
 	BEGIN
 		SELECT 
-			BulkOrderID,
-			BulkOrderNumber,
+			OrderID,
+			OrderNumber,
 			InvoiceNumber,
-			BulkOrderDate,
+			OrderDate,
 			BulkOrderStatus,
 			GST,
 			SubTotal,
