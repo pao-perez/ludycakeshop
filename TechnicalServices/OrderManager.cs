@@ -33,15 +33,15 @@ namespace LudyCakeShop.TechnicalServices
             return orders;
         }
 
-        public IEnumerable<Order> GetOrdersByCustomerEmail(string customerEmail)
+        public IEnumerable<Order> GetOrdersByCustomerContactNumber(string customerContactNumber)
         {
             SQLManager sqlManager = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
-            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerEmail", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = customerEmail });
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CustomerContactNumber", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = customerContactNumber });
 
             DatasourceParameter datasourceParameter = new()
             {
-                StoredProcedure = "GetOrdersByCustomerEmail",
+                StoredProcedure = "GetOrdersByCustomerContactNumber",
                 StoredProcedureParameters = storedProcedureParameters,
                 ClassType = typeof(Order)
             };

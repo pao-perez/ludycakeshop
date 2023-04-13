@@ -15,15 +15,15 @@ namespace LudyCakeShop.Controllers
         public OrderHistoryController() =>
             _requestDirector = new();
 
-        [HttpGet("{customerEmail}")]
+        [HttpGet("{customerContactNumber}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Order))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult Get(string customerEmail)
+        public IActionResult Get(string customerContactNumber)
         {
             try
             {
-                return StatusCode(200, _requestDirector.GetOrdersByCustomerEmail(customerEmail));
+                return StatusCode(200, _requestDirector.GetOrdersByCustomerContactNumber(customerContactNumber));
             }
             catch (Exception)
             {
