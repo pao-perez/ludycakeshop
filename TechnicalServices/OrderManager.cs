@@ -23,7 +23,7 @@ namespace LudyCakeShop.TechnicalServices
             IEnumerable<Order> resultOrders = sqlManager.SelectAll<Order>(datasourceParameter);
 
             List<Order> orders = new();
-            IEnumerable<OrderItem> orderItems = GetOrderItems(); // get all order Items from DB
+            IEnumerable<OrderItem> orderItems = GetOrderItems();
             foreach (Order order in resultOrders)
             {
                 order.OrderItems = orderItems.Where(orderItem => orderItem.OrderID == order.OrderID);
@@ -59,7 +59,7 @@ namespace LudyCakeShop.TechnicalServices
             return orders;
         }
 
-        public IEnumerable<OrderItem> GetOrderItems()
+        private static IEnumerable<OrderItem> GetOrderItems()
         {
             SQLManager sqlManager = new();
 
@@ -74,7 +74,7 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.SelectAll<OrderItem>(datasourceParameter);
         }
 
-        public IEnumerable<OrderItem> GetOrderItems(string orderID)
+        private static IEnumerable<OrderItem> GetOrderItems(string orderID)
         {
             SQLManager sqlManager = new();
 
@@ -218,7 +218,7 @@ namespace LudyCakeShop.TechnicalServices
             return bulkOrders;
         }
 
-        public IEnumerable<OrderItem> GetBulkOrderItems()
+        private static IEnumerable<OrderItem> GetBulkOrderItems()
         {
             SQLManager sqlManager = new();
 
@@ -233,7 +233,7 @@ namespace LudyCakeShop.TechnicalServices
             return sqlManager.SelectAll<OrderItem>(datasourceParameter);
         }
 
-        public IEnumerable<OrderItem> GetBulkOrderItems(string orderID)
+        private static IEnumerable<OrderItem> GetBulkOrderItems(string orderID)
         {
             SQLManager sqlManager = new();
 
