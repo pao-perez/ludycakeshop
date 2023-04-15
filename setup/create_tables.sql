@@ -78,7 +78,7 @@ CREATE TABLE BulkOrderItem
 CREATE TABLE UserAccount
 (
 	UserAccountID INT IDENTITY (1,1) NOT NULL CONSTRAINT PK_UserAccount_UserAccountID PRIMARY KEY,
-	Username VARCHAR(20) NOT NULL,
+	Username VARCHAR(30) NOT NULL CONSTRAINT U_UserAccount_Username UNIQUE (Username),
 	Password VARCHAR(60) NOT NULL,
 )
 
