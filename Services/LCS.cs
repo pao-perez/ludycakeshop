@@ -11,14 +11,14 @@ namespace LudyCakeShop.Services
         private readonly CategoryManager _categoryManager;
         private readonly ProductManager _productManager;
         private readonly OrderManager _orderManager;
-        private readonly EmailSender _emailSender;
+        private readonly EmailManager _emailManager;
 
         public LCS()
         {
             _categoryManager = new();
             _productManager = new();
             _orderManager = new();
-            _emailSender = new();
+            _emailManager = new();
         }
 
         public string CreateProduct(Product product)
@@ -58,7 +58,7 @@ namespace LudyCakeShop.Services
             order.OrderStatus = OrderStatus.SUBMITTED;
             order.OrderID = Guid.NewGuid().ToString();
             _orderManager.CreateOrder(order);
-            _emailSender.SendEmail(new OrderEmailMessage(order));
+            _emailManager.SendEmail(new OrderEmailMessage(order));
 
             return order.OrderID;
         }
@@ -111,7 +111,7 @@ namespace LudyCakeShop.Services
             bulkOrder.BulkOrderStatus = BulkOrderStatus.SUBMITTED;
             bulkOrder.OrderID = Guid.NewGuid().ToString();
             _orderManager.CreateBulkOrder(bulkOrder);
-            _emailSender.SendEmail(new BulkOrderEmailMessage(bulkOrder));
+            _emailManager.SendEmail(new BulkOrderEmailMessage(bulkOrder));
 
             return bulkOrder.OrderID;
         }

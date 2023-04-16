@@ -1,16 +1,17 @@
-﻿using MailKit.Net.Smtp;
+﻿using LudyCakeShop.Domain;
+using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using System.IO;
 
-namespace LudyCakeShop.Domain
+namespace LudyCakeShop.TechnicalServices
 {
-    public class EmailSender
+    public class EmailManager
     {
         private readonly EmailConfiguration _emailConfig;
         private readonly string settingFile = "appsettings.json";
 
-        public EmailSender()
+        public EmailManager()
         {
             _emailConfig = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
