@@ -3,8 +3,6 @@ using LudyCakeShop.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-
 namespace LudyCakeShop.Controllers
 {
     [Route("api/[controller]")]
@@ -18,8 +16,6 @@ namespace LudyCakeShop.Controllers
 
         [HttpGet]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BulkOrder))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetAll()
         {
             try
@@ -35,9 +31,6 @@ namespace LudyCakeShop.Controllers
 
         [HttpGet("{orderID}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(BulkOrder))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetByID(string orderID)
         {
             try
@@ -59,8 +52,6 @@ namespace LudyCakeShop.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Post(BulkOrder bulkOrder)
         {
             try
@@ -79,8 +70,6 @@ namespace LudyCakeShop.Controllers
 
         [HttpPut("{orderID}")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Put(string orderID, BulkOrder bulkOrder)
         {
             try

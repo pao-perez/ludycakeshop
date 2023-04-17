@@ -1,6 +1,4 @@
-﻿using LudyCakeShop.Domain;
-using LudyCakeShop.Services;
-using Microsoft.AspNetCore.Http;
+﻿using LudyCakeShop.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -17,8 +15,6 @@ namespace LudyCakeShop.Controllers
 
         [HttpGet("{customerContactNumber}")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Order))]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Get(string customerContactNumber)
         {
             try

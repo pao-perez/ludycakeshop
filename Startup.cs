@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace LudyCakeShop
 {
@@ -21,10 +20,6 @@ namespace LudyCakeShop
         {
 
             services.AddRouting(options => options.LowercaseUrls = true);
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "LudyCakeShop", Version = "v1" });
-            });
             services.AddControllers().AddNewtonsoftJson();
             services.AddCors(options =>
             {
@@ -43,8 +38,6 @@ namespace LudyCakeShop
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LudyCakeShop v1"));
             }
 
             app.UseHttpsRedirection();

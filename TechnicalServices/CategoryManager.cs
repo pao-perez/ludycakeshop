@@ -45,7 +45,7 @@ namespace LudyCakeShop.TechnicalServices
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = categoryID });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = category.CategoryName });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryDescription", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = category.CategoryDescription });
-            //storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryImage", ParameterSqlDbType = SqlDbType.Image, ParameterValue = category.CategoryImage });
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryImage", ParameterSqlDbType = SqlDbType.Image, ParameterValue = category.CategoryImage });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "CreateCategory",
@@ -80,7 +80,7 @@ namespace LudyCakeShop.TechnicalServices
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = categoryID });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = category.CategoryName });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryDescription", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = category.CategoryDescription });
-            //storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryImage", ParameterSqlDbType = SqlDbType.Image, ParameterValue = category.CategoryImage });
+            storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryImage", ParameterSqlDbType = SqlDbType.Image, ParameterValue = category.CategoryImage });
             datasourceParameters.Add(new()
             {
                 StoredProcedure = "UpdateCategory",
