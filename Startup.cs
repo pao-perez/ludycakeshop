@@ -26,6 +26,15 @@ namespace LudyCakeShop
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "LudyCakeShop", Version = "v1" });
             });
             services.AddControllers().AddNewtonsoftJson();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("_allowedOrigins", policy =>
+                {
+                    policy.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,6 +48,8 @@ namespace LudyCakeShop
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("_allowedOrigins");
 
             app.UseRouting();
 
