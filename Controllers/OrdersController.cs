@@ -1,11 +1,13 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LudyCakeShop.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
@@ -51,6 +53,7 @@ namespace LudyCakeShop.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Post(Order order)

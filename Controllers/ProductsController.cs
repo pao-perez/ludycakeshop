@@ -1,11 +1,13 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LudyCakeShop.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
@@ -15,6 +17,7 @@ namespace LudyCakeShop.Controllers
         public ProductsController() =>
             _requestDirector = new();
 
+        [AllowAnonymous]
         [HttpGet]
         [Produces("application/json")]
         public IActionResult GetAll()
@@ -30,6 +33,7 @@ namespace LudyCakeShop.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("{productID}")]
         [Produces("application/json")]
         public IActionResult GetByID(string productID)

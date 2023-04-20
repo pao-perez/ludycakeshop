@@ -12,6 +12,7 @@ namespace LudyCakeShop.Services
         private readonly ProductManager _productManager;
         private readonly OrderManager _orderManager;
         private readonly EmailManager _emailManager;
+        private readonly AuthManager _authManager;
 
         public LCS()
         {
@@ -19,6 +20,7 @@ namespace LudyCakeShop.Services
             _productManager = new();
             _orderManager = new();
             _emailManager = new();
+            _authManager = new();
         }
 
         public string CreateProduct(Product product)
@@ -39,6 +41,11 @@ namespace LudyCakeShop.Services
         public IEnumerable<Order> GetOrdersByCustomerContactNumber(string customerContactNumber)
         {
             return _orderManager.GetOrdersByCustomerContactNumber(customerContactNumber);
+        }
+
+        public UserAccount GetAuth(string username)
+        {
+            return _authManager.GetAuth(username);
         }
 
         public IEnumerable<Product> GetProducts()

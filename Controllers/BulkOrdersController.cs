@@ -1,10 +1,12 @@
 ﻿using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 namespace LudyCakeShop.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BulkOrdersController : ControllerBase
@@ -50,6 +52,7 @@ namespace LudyCakeShop.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Post(BulkOrder bulkOrder)

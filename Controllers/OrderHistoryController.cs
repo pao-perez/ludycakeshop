@@ -1,9 +1,11 @@
 ﻿using LudyCakeShop.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
 namespace LudyCakeShop.Controllers
 {
+    [Authorize]
     [Route("api/orders/history")]
     [ApiController]
     public class OrderHistoryController : ControllerBase
