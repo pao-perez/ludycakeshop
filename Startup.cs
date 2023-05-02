@@ -24,6 +24,15 @@ namespace LudyCakeShop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            EmailConfiguration emailConfig = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile("appsettings.json")
+                            .Build()
+                            .GetSection("EmailConfiguration")
+                            .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailManager, EmailManager>();
+
             AuthConfiguration authConfig = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
                             .AddJsonFile("appsettings.json")

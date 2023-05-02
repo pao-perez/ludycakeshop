@@ -1,24 +1,16 @@
 ﻿using LudyCakeShop.Domain;
 using MailKit.Net.Smtp;
-using Microsoft.Extensions.Configuration;
 using MimeKit;
-using System.IO;
 
 namespace LudyCakeShop.TechnicalServices
 {
-    public class EmailManager
+    public class EmailManager : IEmailManager
     {
         private readonly EmailConfiguration _emailConfig;
-        private readonly string settingFile = "appsettings.json";
 
-        public EmailManager()
+        public EmailManager(EmailConfiguration emailConfig)
         {
-            _emailConfig = new ConfigurationBuilder()
-                            .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile(settingFile)
-                            .Build()
-                            .GetSection("EmailConfiguration")
-                            .Get<EmailConfiguration>();
+            _emailConfig = emailConfig;
         }
 
         public void SendEmail(EmailMessage message)
