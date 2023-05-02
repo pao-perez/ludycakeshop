@@ -26,5 +26,3 @@ AS
 	RETURN @ReturnCode
 
 GRANT EXECUTE ON GetUserAccount TO aspnetcore
-
-DROP PROCEDURE GetUserAccount

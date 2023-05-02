@@ -20,7 +20,4 @@ AS
 
 RETURN @ReturnCode
 
-
 GRANT EXECUTE ON GetProducts TO aspnetcore
-
-DROP PROCEDURE GetProducts

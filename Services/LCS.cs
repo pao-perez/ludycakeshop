@@ -2,7 +2,6 @@
 using LudyCakeShop.TechnicalServices;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace LudyCakeShop.Services
 {

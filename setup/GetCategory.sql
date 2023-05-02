@@ -24,5 +24,3 @@ AS
 
 
 GRANT EXECUTE ON GetCategory TO aspnetcore
-
-DROP PROCEDURE GetCategory

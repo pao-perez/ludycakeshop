@@ -22,7 +22,4 @@ AS
 
 RETURN @ReturnCode
 
-
 GRANT EXECUTE ON GetOrderItemsByOrderID TO aspnetcore
-
-DROP PROCEDURE GetOrderItemsByOrderID

@@ -42,5 +42,3 @@ AS
 	Return @ReturnCode
 
 GRANT EXECUTE ON UpdateOrder TO aspnetcore
-
-DROP PROCEDURE UpdateOrder

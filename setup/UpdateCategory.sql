@@ -30,5 +30,3 @@ AS
 	Return @ReturnCode
 
 GRANT EXECUTE ON UpdateCategory TO aspnetcore
-
-DROP PROCEDURE UpdateCategory

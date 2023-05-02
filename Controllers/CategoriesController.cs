@@ -14,8 +14,10 @@ namespace LudyCakeShop.Controllers
     {
         private readonly LCS _requestDirector;
 
-        public CategoriesController() =>
+        public CategoriesController()
+        {
             _requestDirector = new();
+        }
 
         [AllowAnonymous]
         [HttpGet]

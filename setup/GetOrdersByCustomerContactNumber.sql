@@ -24,5 +24,3 @@ AS
 
 
 GRANT EXECUTE ON GetOrdersByCustomerContactNumber TO aspnetcore
-
-DROP PROCEDURE GetOrdersByCustomerContactNumber

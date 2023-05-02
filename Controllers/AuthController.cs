@@ -18,8 +18,10 @@ namespace LudyCakeShop.Controllers
     {
         private readonly LCS _requestDirector;
 
-        public AuthController() =>
+        public AuthController()
+        {
             _requestDirector = new();
+        }
 
         [HttpPost]
         [Consumes("application/json")]
@@ -56,7 +58,7 @@ namespace LudyCakeShop.Controllers
                             issuer: authConfig.ValidIssuer,
                             audience: authConfig.ValidAudience,
                             claims: new List<Claim>(),
-                            expires: DateTime.Now.AddMinutes(15),
+                            expires: DateTime.Now.AddMinutes(authConfig.TokenExpiration),
                             signingCredentials: signingCredentials
                         );
 

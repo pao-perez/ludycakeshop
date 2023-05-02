@@ -12,8 +12,10 @@ namespace LudyCakeShop.Controllers
     {
         private readonly LCS _requestDirector;
 
-        public OrderHistoryController() =>
+        public OrderHistoryController()
+        {
             _requestDirector = new();
+        }
 
         [HttpGet("{customerContactNumber}")]
         [Produces("application/json")]

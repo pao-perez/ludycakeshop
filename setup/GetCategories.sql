@@ -21,5 +21,3 @@ RETURN @ReturnCode
 
 
 GRANT EXECUTE ON GetCategories TO aspnetcore
-
-DROP PROCEDURE GetCategories

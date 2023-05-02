@@ -44,5 +44,3 @@ AS
 	Return @ReturnCode
 
 GRANT EXECUTE ON UpdateBulkOrder TO aspnetcore
-
-DROP PROCEDURE UpdateBulkOrder

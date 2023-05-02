@@ -24,5 +24,3 @@ AS
 	Return @ReturnCode
 
 GRANT EXECUTE ON DiscontinueProduct TO aspnetcore
-
-DROP PROCEDURE DiscontinueProduct

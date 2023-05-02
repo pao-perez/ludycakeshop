@@ -37,5 +37,3 @@ AS
 RETURN @ReturnCode
 
 GRANT EXECUTE ON GetBulkOrder TO aspnetcore
-
-DROP PROCEDURE GetBulkOrder

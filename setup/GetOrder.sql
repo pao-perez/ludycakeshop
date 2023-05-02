@@ -24,5 +24,3 @@ AS
 
 
 GRANT EXECUTE ON GetOrder TO aspnetcore
-
-DROP PROCEDURE GetOrder

@@ -27,5 +27,3 @@ AS
 	Return @ReturnCode
 
 GRANT EXECUTE ON CreateCategory TO aspnetcore
-
-DROP PROCEDURE CreateCategory

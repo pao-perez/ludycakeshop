@@ -13,8 +13,10 @@ namespace LudyCakeShop.Controllers
     {
         private readonly LCS _requestDirector;
 
-        public BulkOrdersController() =>
+        public BulkOrdersController()
+        {
             _requestDirector = new();
+        }
 
         [HttpGet]
         [Produces("application/json")]

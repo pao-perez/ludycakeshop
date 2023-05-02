@@ -24,5 +24,3 @@ AS
 
 
 GRANT EXECUTE ON GetProduct TO aspnetcore
-
-DROP PROCEDURE GetProduct

@@ -1,12 +1,11 @@
 use ludycakeshop
 
-
 CREATE TABLE Category
 (
 	CategoryID VARCHAR(36) NOT NULL CONSTRAINT PK_Category_CategoryID PRIMARY KEY,
 	CategoryName VARCHAR(30) NOT NULL,
 	CategoryDescription VARCHAR(255) NULL, 
-	CategoryImage Image NULL
+	CategoryImage IMAGE NULL
 )
 
 CREATE TABLE Product
@@ -81,25 +80,3 @@ CREATE TABLE UserAccount
 	Username VARCHAR(30) NOT NULL CONSTRAINT U_UserAccount_Username UNIQUE (Username),
 	Password VARCHAR(60) NOT NULL,
 )
-
-
- INSERT INTO Category
-	(CategoryID,CategoryName)
- VALUES
-	('23165650-6f81-4c7e-b25f-5b77646ec7b2','Cakes')
-
- INSERT INTO Category
-	(CategoryID,CategoryName)
- VALUES
-	('34565650-6f81-4c7e-b25f-5b77646ec7a2','Breads')
-
-
-INSERT INTO Product
-	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
-	VALUES
-	('45265650-3f63-4c7e-b25f-5b77646eb3a2','Pandesal',40,4.56,'34565650-6f81-4c7e-b25f-5b77646ec7a2')
-INSERT INTO Product
-	(ProductID,ProductName,QuantityAvailable,UnitPrice,CategoryID)
-	VALUES
-	('23455450-5d63-5d7f-a25f-3b77646eb3c5','Carrot Cake',2,11,'23165650-6f81-4c7e-b25f-5b77646ec7b2')
-

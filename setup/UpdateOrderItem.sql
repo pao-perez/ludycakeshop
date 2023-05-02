@@ -35,5 +35,3 @@ AS
 	Return @ReturnCode
 
 GRANT EXECUTE ON UpdateOrderItem TO aspnetcore
-
-DROP PROCEDURE UpdateOrderItem

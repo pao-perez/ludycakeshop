@@ -24,5 +24,3 @@ AS
 
 
 GRANT EXECUTE ON DeleteCategory TO aspnetcore
-
-DROP PROCEDURE DeleteCategory
