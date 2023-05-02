@@ -44,7 +44,7 @@ namespace LudyCakeShop.TechnicalServices
             return command;
         }
 
-        public static SqlParameter CreateSqlCommandInputParameter(string storedProcedureParameter, SqlDbType sqlDbType, object sqlValue)
+        private static SqlParameter CreateSqlCommandInputParameter(string storedProcedureParameter, SqlDbType sqlDbType, object sqlValue)
         {
             SqlParameter commandParameter = new()
             {
@@ -55,6 +55,32 @@ namespace LudyCakeShop.TechnicalServices
             };
 
             return commandParameter;
+        }
+
+        private static List<PropertyInfo> GetPropertyFields(SqlDataReader dataReader, DatasourceParameter datasourceParameter)
+        {
+            PropertyInfo prop;
+            List<PropertyInfo> props = new();
+            for (int index = 0; index < dataReader.FieldCount; index++)
+            {
+                prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
+                props.Add(prop);
+            }
+
+            return props;
+        }
+
+        private static void SetObjectProperties<T>(SqlDataReader dataReader, List<PropertyInfo> props, T obj)
+        {
+            for (int index = 0; index < dataReader.FieldCount; index++)
+            {
+                PropertyInfo storedProp = props[index];
+                var val = dataReader[index];
+                if (storedProp != null && val != DBNull.Value)
+                {
+                    storedProp.SetValue(obj, val);
+                }
+            }
         }
 
         public T Select<T>(DatasourceParameter datasourceParameter)
@@ -77,24 +103,10 @@ namespace LudyCakeShop.TechnicalServices
                 return default;
             }
             T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
-            PropertyInfo prop;
-            List<PropertyInfo> props = new();
-            for (int index = 0; index < dataReader.FieldCount; index++)
-            {
-                prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
-                props.Add(prop);
-            }
+            List<PropertyInfo> props = GetPropertyFields(dataReader, datasourceParameter);
             while (dataReader.Read())
             {
-                for (int index = 0; index < dataReader.FieldCount; index++)
-                {
-                    PropertyInfo storedProp = props[index];
-                    var val = dataReader[index];
-                    if (storedProp != null && val != DBNull.Value)
-                    {
-                        storedProp.SetValue(obj, val);
-                    }
-                }
+                SetObjectProperties(dataReader, props, obj);
             }
 
             dataReader.Close();
@@ -121,25 +133,11 @@ namespace LudyCakeShop.TechnicalServices
             List<T> objects = new();
             if (dataReader.HasRows)
             {
-                PropertyInfo prop;
-                List<PropertyInfo> props = new();
-                for (int index = 0; index < dataReader.FieldCount; index++)
-                {
-                    prop = datasourceParameter.ClassType.GetProperty(dataReader.GetName(index));
-                    props.Add(prop);
-                }
+                List<PropertyInfo> props = GetPropertyFields(dataReader, datasourceParameter);
                 while (dataReader.Read())
                 {
                     T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
-                    for (int index = 0; index < dataReader.FieldCount; index++)
-                    {
-                        PropertyInfo storedProp = props[index];
-                        var val = dataReader[index];
-                        if (storedProp != null && val != DBNull.Value)
-                        {
-                            storedProp.SetValue(obj, val);
-                        }
-                    }
+                    SetObjectProperties(dataReader, props, obj);
                     objects.Add(obj);
                 }
             }
