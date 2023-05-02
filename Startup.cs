@@ -1,4 +1,5 @@
 using LudyCakeShop.Domain;
+using LudyCakeShop.TechnicalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +30,7 @@ namespace LudyCakeShop
                             .Build()
                             .GetSection("AuthConfiguration")
                             .Get<AuthConfiguration>();
+            services.AddSingleton(authConfig);
 
             services.AddAuthentication(option =>
             {

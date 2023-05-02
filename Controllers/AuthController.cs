@@ -17,23 +17,18 @@ namespace LudyCakeShop.Controllers
     public class AuthController : ControllerBase
     {
         private readonly LCS _requestDirector;
+        private readonly AuthConfiguration _authConfig;
 
-        public AuthController()
+        public AuthController(AuthConfiguration authConfig)
         {
             _requestDirector = new();
+            _authConfig = authConfig;
         }
 
         [HttpPost]
         [Consumes("application/json")]
         public IActionResult Post(UserAccount userAccount)
         {
-            AuthConfiguration authConfig = new ConfigurationBuilder()
-                            .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.json")
-                            .Build()
-                            .GetSection("AuthConfiguration")
-                            .Get<AuthConfiguration>();
-
             if (userAccount == null)
             {
                 return StatusCode(400, "UserAccount Invalid.");
@@ -51,14 +46,14 @@ namespace LudyCakeShop.Controllers
 
                 if (userAccount.Username.Equals(storedUserAccount.Username) && userAccount.Password.Equals(storedUserAccount.Password))
                 {
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authConfig.SigningKeySecret));
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authConfig.SigningKeySecret));
                     var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
                     var tokenOptions = new JwtSecurityToken(
-                            issuer: authConfig.ValidIssuer,
-                            audience: authConfig.ValidAudience,
+                            issuer: _authConfig.ValidIssuer,
+                            audience: _authConfig.ValidAudience,
                             claims: new List<Claim>(),
-                            expires: DateTime.Now.AddMinutes(authConfig.TokenExpiration),
+                            expires: DateTime.Now.AddMinutes(_authConfig.TokenExpiration),
                             signingCredentials: signingCredentials
                         );
 
