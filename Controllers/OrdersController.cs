@@ -12,11 +12,11 @@ namespace LudyCakeShop.Controllers
     [Route("api/[controller]")]
     public class OrdersController : ControllerBase
     {
-        private readonly LCS _requestDirector;
+        private readonly IOrdersService _ordersService;
 
-        public OrdersController()
+        public OrdersController(IOrdersService ordersService)
         {
-            _requestDirector = new();
+            this._ordersService = ordersService;
         }
 
         [HttpGet]
@@ -25,7 +25,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                return StatusCode(200, _requestDirector.GetOrders());
+                return StatusCode(200, _ordersService.GetOrders());
             }
             catch (Exception)
             {
@@ -40,7 +40,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                Order order = _requestDirector.GetOrder(orderID);
+                Order order = _ordersService.GetOrder(orderID);
                 if (order == null)
                 {
                     return StatusCode(404, "OrderID not found.");
@@ -62,7 +62,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                string orderID = _requestDirector.CreateOrder(order);
+                string orderID = _ordersService.CreateOrder(order);
                 string path = HttpContext.Request.Path;
                 string createdURI = path + "/" + orderID;
                 return StatusCode(201, createdURI);
@@ -79,7 +79,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                _requestDirector.UpdateOrder(orderID, orders);
+                _ordersService.UpdateOrder(orderID, orders);
             }
             catch (Exception)
             {

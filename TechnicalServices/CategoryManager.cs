@@ -5,11 +5,16 @@ using System.Data;
 
 namespace LudyCakeShop.TechnicalServices
 {
-    public class CategoryManager
+    public class CategoryManager : ICategoryManager
     {
+        private readonly ISQLManager _sqlManager;
+        public CategoryManager(ISQLManager sqlManager)
+        {
+            this._sqlManager = sqlManager;
+        }
+
         public IEnumerable<Category> GetCategories()
         {
-            SQLManager sqlManager = new();
             DatasourceParameter datasourceParameter = new()
             {
                 StoredProcedure = "GetCategories",
@@ -17,12 +22,11 @@ namespace LudyCakeShop.TechnicalServices
                 ClassType = typeof(Category)
             };
 
-            return sqlManager.SelectAll<Category>(datasourceParameter);
+            return _sqlManager.SelectAll<Category>(datasourceParameter);
         }
 
         public Category GetCategory(string categoryID)
         {
-            SQLManager sqlManager = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = categoryID });
             DatasourceParameter datasourceParameter = new()
@@ -32,12 +36,11 @@ namespace LudyCakeShop.TechnicalServices
                 ClassType = typeof(Category)
             };
 
-            return sqlManager.Select<Category>(datasourceParameter);
+            return _sqlManager.Select<Category>(datasourceParameter);
         }
 
         public string CreateCategory(Category category)
         {
-            SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
             var categoryID = Guid.NewGuid().ToString();
@@ -52,14 +55,13 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            sqlManager.UpsertTransaction(datasourceParameters);
+            _sqlManager.UpsertTransaction(datasourceParameters);
 
             return categoryID;
         }
 
         public bool DeleteCategory(string categoryID)
         {
-            SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = categoryID });
@@ -69,12 +71,11 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            return sqlManager.DeleteTransaction(datasourceParameters);
+            return _sqlManager.DeleteTransaction(datasourceParameters);
         }
 
         public bool UpdateCategory(string categoryID, Category category)
         {
-            SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@CategoryID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = categoryID });
@@ -87,7 +88,7 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            return sqlManager.UpsertTransaction(datasourceParameters);
+            return _sqlManager.UpsertTransaction(datasourceParameters);
         }
     }
 }

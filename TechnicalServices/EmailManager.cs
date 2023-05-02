@@ -10,7 +10,7 @@ namespace LudyCakeShop.TechnicalServices
 
         public EmailManager(EmailConfiguration emailConfig)
         {
-            _emailConfig = emailConfig;
+            this._emailConfig = emailConfig;
         }
 
         public void SendEmail(EmailMessage message)

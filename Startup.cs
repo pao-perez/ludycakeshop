@@ -1,4 +1,5 @@
 using LudyCakeShop.Domain;
+using LudyCakeShop.Services;
 using LudyCakeShop.TechnicalServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -24,18 +25,41 @@ namespace LudyCakeShop
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            const string SETTINGS_FILE = "appsettings.json";
+
             EmailConfiguration emailConfig = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.json")
+                            .AddJsonFile(SETTINGS_FILE)
                             .Build()
                             .GetSection("EmailConfiguration")
                             .Get<EmailConfiguration>();
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailManager, EmailManager>();
 
+            SQLConfiguration sqlConfig = new ConfigurationBuilder()
+                            .SetBasePath(Directory.GetCurrentDirectory())
+                            .AddJsonFile(SETTINGS_FILE)
+                            .Build()
+                            .GetSection("SQLConfiguration")
+                            .Get<SQLConfiguration>();
+            services.AddSingleton(sqlConfig);
+
+            services.AddScoped<ISQLManager, SQLManager>();
+            services.AddScoped<IAuthManager, AuthManager>();
+            services.AddScoped<ICategoryManager, CategoryManager>();
+            services.AddScoped<IProductManager, ProductManager>();
+            services.AddScoped<IOrdersManager, OrdersManager>();
+            services.AddScoped<IBulkOrdersManager, BulkOrdersManager>();
+
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IOrdersService, OrdersService>();
+            services.AddScoped<IBulkOrdersService, BulkOrdersService>();
+
             AuthConfiguration authConfig = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.json")
+                            .AddJsonFile(SETTINGS_FILE)
                             .Build()
                             .GetSection("AuthConfiguration")
                             .Get<AuthConfiguration>();

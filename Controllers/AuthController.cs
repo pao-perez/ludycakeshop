@@ -16,13 +16,13 @@ namespace LudyCakeShop.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly LCS _requestDirector;
+        private readonly IAuthService _authService;
         private readonly AuthConfiguration _authConfig;
 
-        public AuthController(AuthConfiguration authConfig)
+        public AuthController(IAuthService authService, AuthConfiguration authConfig)
         {
-            _requestDirector = new();
-            _authConfig = authConfig;
+            this._authService = authService;
+            this._authConfig = authConfig;
         }
 
         [HttpPost]
@@ -37,7 +37,7 @@ namespace LudyCakeShop.Controllers
             UserAccount storedUserAccount;
             try
             {
-                storedUserAccount = _requestDirector.GetAuth(userAccount.Username);
+                storedUserAccount = _authService.GetAuth(userAccount.Username);
 
                 if (storedUserAccount == null)
                 {

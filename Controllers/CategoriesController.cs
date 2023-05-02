@@ -12,11 +12,11 @@ namespace LudyCakeShop.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly LCS _requestDirector;
+        private readonly ICategoryService _categoryService;
 
-        public CategoriesController()
+        public CategoriesController(ICategoryService categoryService)
         {
-            _requestDirector = new();
+            this._categoryService = categoryService;
         }
 
         [AllowAnonymous]
@@ -26,7 +26,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                return StatusCode(200, _requestDirector.GetCategories());
+                return StatusCode(200, _categoryService.GetCategories());
             }
             catch (Exception)
             {
@@ -42,7 +42,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                Category category = _requestDirector.GetCategory(categoryID);
+                Category category = _categoryService.GetCategory(categoryID);
                 if (category == null)
                 {
                     return StatusCode(404, "CategoryID not found.");
@@ -63,7 +63,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                string categoryID = _requestDirector.CreateCategory(category);
+                string categoryID = _categoryService.CreateCategory(category);
                 string path = HttpContext.Request.Path;
                 string createdURI = path + "/" + categoryID;
                 return StatusCode(201, createdURI);
@@ -81,7 +81,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                _requestDirector.UpdateCategory(categoryID, category);
+                _categoryService.UpdateCategory(categoryID, category);
             }
             catch (Exception)
             {
@@ -98,7 +98,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                _requestDirector.DeleteCategory(categoryID);
+                _categoryService.DeleteCategory(categoryID);
             }
             catch (Exception)
             {

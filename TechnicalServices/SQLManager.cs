@@ -3,24 +3,18 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
-using System.IO;
 using System.Linq;
+using LudyCakeShop.Domain;
 
 namespace LudyCakeShop.TechnicalServices
 {
-    public class SQLManager
+    public class SQLManager : ISQLManager
     {
-        private readonly string _sqlConnectionString;
-        private readonly string settingFile = "appsettings.json";
+        private readonly SQLConfiguration _sqlConfig;
 
-        public SQLManager()
+        public SQLManager(SQLConfiguration sqlConfig)
         {
-            _sqlConnectionString = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile(settingFile)
-                .Build()
-                .GetConnectionString("SQLServer");
+            this._sqlConfig = sqlConfig;
         }
 
         private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure)
@@ -86,7 +80,7 @@ namespace LudyCakeShop.TechnicalServices
         public T Select<T>(DatasourceParameter datasourceParameter)
         {
             SqlConnection sqlConnection = new();
-            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
             sqlConnection.Open();
 
             SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
@@ -118,7 +112,7 @@ namespace LudyCakeShop.TechnicalServices
         public IEnumerable<T> SelectAll<T>(DatasourceParameter datasourceParameter)
         {
             SqlConnection sqlConnection = new();
-            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
             sqlConnection.Open();
 
             SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
@@ -152,7 +146,7 @@ namespace LudyCakeShop.TechnicalServices
         {
             bool success = false;
             SqlConnection sqlConnection = new();
-            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
             sqlConnection.Open();
             SqlTransaction sqlDatasourceTransaction = sqlConnection.BeginTransaction();
 
@@ -194,7 +188,7 @@ namespace LudyCakeShop.TechnicalServices
         {
             bool success;
             SqlConnection sqlConnection = new();
-            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
             sqlConnection.Open();
 
             SqlCommand command = CreateSqlCommand(sqlConnection, storedProcedure);
@@ -209,7 +203,7 @@ namespace LudyCakeShop.TechnicalServices
         {
             bool success = false;
             SqlConnection sqlConnection = new();
-            sqlConnection.ConnectionString = _sqlConnectionString;
+            sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
             sqlConnection.Open();
             SqlTransaction sqlDatasourceTransaction = sqlConnection.BeginTransaction();
 

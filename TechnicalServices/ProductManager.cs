@@ -5,11 +5,16 @@ using System.Data;
 
 namespace LudyCakeShop.TechnicalServices
 {
-    public class ProductManager
+    public class ProductManager : IProductManager
     {
+        private readonly ISQLManager _sqlManager;
+        public ProductManager(ISQLManager sqlManager)
+        {
+            this._sqlManager = sqlManager;
+        }
+
         public IEnumerable<Product> GetProducts()
         {
-            SQLManager sqlManager = new();
             DatasourceParameter datasourceParameter = new()
             {
                 StoredProcedure = "GetProducts",
@@ -17,12 +22,11 @@ namespace LudyCakeShop.TechnicalServices
                 ClassType = typeof(Product)
             };
 
-            return sqlManager.SelectAll<Product>(datasourceParameter);
+            return _sqlManager.SelectAll<Product>(datasourceParameter);
         }
 
         public Product GetProduct(string productID)
         {
-            SQLManager sqlManager = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = productID });
             DatasourceParameter datasourceParameter = new()
@@ -32,12 +36,11 @@ namespace LudyCakeShop.TechnicalServices
                 ClassType = typeof(Product)
             };
 
-            return sqlManager.Select<Product>(datasourceParameter);
+            return _sqlManager.Select<Product>(datasourceParameter);
         }
 
         public string CreateProduct(Product product)
         {
-            SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
             var productID = Guid.NewGuid().ToString();
@@ -57,14 +60,13 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            sqlManager.UpsertTransaction(datasourceParameters);
+            _sqlManager.UpsertTransaction(datasourceParameters);
 
             return productID;
         }
 
         public bool UpdateProduct(string productID, Product product)
         {
-            SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
             //TODO: check if product ID exists in any "active" order
@@ -84,12 +86,11 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            return sqlManager.UpsertTransaction(datasourceParameters);
+            return _sqlManager.UpsertTransaction(datasourceParameters);
         }
 
         public bool DeleteProduct(string productID)
         {
-            SQLManager sqlManager = new();
             List<DatasourceParameter> datasourceParameters = new();
 
             //TODO: check if product ID exists in any "active" order
@@ -101,7 +102,7 @@ namespace LudyCakeShop.TechnicalServices
                 StoredProcedureParameters = storedProcedureParameters
             });
 
-            return sqlManager.UpsertTransaction(datasourceParameters);
+            return _sqlManager.UpsertTransaction(datasourceParameters);
         }
     }
 }

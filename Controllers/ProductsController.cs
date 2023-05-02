@@ -12,11 +12,11 @@ namespace LudyCakeShop.Controllers
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-        private readonly LCS _requestDirector;
+        private readonly IProductService _productService;
 
-        public ProductsController()
+        public ProductsController(IProductService productService)
         {
-            _requestDirector = new();
+            this._productService = productService;
         }
 
         [AllowAnonymous]
@@ -26,7 +26,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                return StatusCode(200, _requestDirector.GetProducts());
+                return StatusCode(200, _productService.GetProducts());
             }
             catch (Exception)
             {
@@ -42,7 +42,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                Product product = _requestDirector.GetProduct(productID);
+                Product product = _productService.GetProduct(productID);
                 if (product == null)
                 {
                     return StatusCode(404, "ProductID not found.");
@@ -63,7 +63,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                string productID = _requestDirector.CreateProduct(product);
+                string productID = _productService.CreateProduct(product);
                 string path = HttpContext.Request.Path;
                 string createdURI = path + "/" + productID;
                 return StatusCode(201, createdURI);
@@ -81,7 +81,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                _requestDirector.UpdateProduct(productID, product);
+                _productService.UpdateProduct(productID, product);
             }
             catch (Exception)
             {
@@ -98,7 +98,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                _requestDirector.DeleteProduct(productID);
+                _productService.DeleteProduct(productID);
             }
             catch (Exception)
             {

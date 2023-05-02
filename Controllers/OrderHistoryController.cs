@@ -10,11 +10,11 @@ namespace LudyCakeShop.Controllers
     [ApiController]
     public class OrderHistoryController : ControllerBase
     {
-        private readonly LCS _requestDirector;
+        private readonly IOrdersService _ordersService;
 
-        public OrderHistoryController()
+        public OrderHistoryController(IOrdersService ordersService)
         {
-            _requestDirector = new();
+            this._ordersService = ordersService;
         }
 
         [HttpGet("{customerContactNumber}")]
@@ -23,7 +23,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                return StatusCode(200, _requestDirector.GetOrdersByCustomerContactNumber(customerContactNumber));
+                return StatusCode(200, _ordersService.GetOrdersByCustomerContactNumber(customerContactNumber));
             }
             catch (Exception)
             {

@@ -11,11 +11,11 @@ namespace LudyCakeShop.Controllers
     [ApiController]
     public class BulkOrdersController : ControllerBase
     {
-        private readonly LCS _requestDirector;
+        private readonly IBulkOrdersService _bulkOrdersService;
 
-        public BulkOrdersController()
+        public BulkOrdersController(IBulkOrdersService bulkOrdersService)
         {
-            _requestDirector = new();
+            this._bulkOrdersService = bulkOrdersService;
         }
 
         [HttpGet]
@@ -24,7 +24,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                return StatusCode(200, _requestDirector.GetBulkOrders());
+                return StatusCode(200, _bulkOrdersService.GetBulkOrders());
             }
             catch (Exception)
             {
@@ -39,7 +39,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                BulkOrder bulkOrder = _requestDirector.GetBulkOrder(orderID);
+                BulkOrder bulkOrder = _bulkOrdersService.GetBulkOrder(orderID);
                 if (bulkOrder == null)
                 {
                     return StatusCode(404, "OrderID not found.");
@@ -61,7 +61,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                string orderID = _requestDirector.CreateBulkOrder(bulkOrder);
+                string orderID = _bulkOrdersService.CreateBulkOrder(bulkOrder);
                 string path = HttpContext.Request.Path;
                 string createdURI = path + "/" + orderID;
                 return StatusCode(201, createdURI);
@@ -79,7 +79,7 @@ namespace LudyCakeShop.Controllers
         {
             try
             {
-                _requestDirector.UpdateBulkOrder(orderID, bulkOrder);
+                _bulkOrdersService.UpdateBulkOrder(orderID, bulkOrder);
             }
             catch (Exception)
             {

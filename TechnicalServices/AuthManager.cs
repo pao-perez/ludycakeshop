@@ -4,11 +4,16 @@ using System.Data;
 
 namespace LudyCakeShop.TechnicalServices
 {
-    public class AuthManager
+    public class AuthManager : IAuthManager
     {
+        private readonly ISQLManager _sqlManager;
+        public AuthManager(ISQLManager sqlManager)
+        {
+            this._sqlManager = sqlManager;
+        }
+
         public UserAccount GetAuth(string username)
         {
-            SQLManager sqlManager = new();
             List<StoredProcedureParameter> storedProcedureParameters = new();
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@Username", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = username });
             DatasourceParameter datasourceParameter = new()
@@ -18,7 +23,7 @@ namespace LudyCakeShop.TechnicalServices
                 ClassType = typeof(UserAccount)
             };
 
-            return sqlManager.Select<UserAccount>(datasourceParameter);
+            return _sqlManager.Select<UserAccount>(datasourceParameter);
         }
     }
 }
