@@ -1,6 +1,6 @@
 using LudyCakeShop.Domain;
 using LudyCakeShop.Services;
-using LudyCakeShop.TechnicalServices;
+using LudyCakeShop.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

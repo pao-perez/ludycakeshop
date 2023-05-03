@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Linq;
 using LudyCakeShop.Domain;
 
-namespace LudyCakeShop.TechnicalServices
+namespace LudyCakeShop.Infrastructure
 {
     public class SQLManager : ISQLManager
     {

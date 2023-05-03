@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace LudyCakeShop.TechnicalServices
+namespace LudyCakeShop.Infrastructure
 {
     public interface ISQLManager
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 
-namespace LudyCakeShop.TechnicalServices
+namespace LudyCakeShop.Infrastructure
 {
     public class StoredProcedureParameter
     {

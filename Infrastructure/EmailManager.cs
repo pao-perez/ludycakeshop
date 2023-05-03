@@ -2,7 +2,7 @@
 using MailKit.Net.Smtp;
 using MimeKit;
 
-namespace LudyCakeShop.TechnicalServices
+namespace LudyCakeShop.Infrastructure
 {
     public class EmailManager : IEmailManager
     {

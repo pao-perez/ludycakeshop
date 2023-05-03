@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 
-namespace LudyCakeShop.TechnicalServices
+namespace LudyCakeShop.Infrastructure
 {
     public class AuthManager : IAuthManager
     {

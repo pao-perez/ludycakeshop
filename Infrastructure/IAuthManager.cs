@@ -1,6 +1,6 @@
 ﻿using LudyCakeShop.Domain;
 
-namespace LudyCakeShop.TechnicalServices
+namespace LudyCakeShop.Infrastructure
 {
     public interface IAuthManager
     {
