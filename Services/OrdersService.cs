@@ -23,8 +23,6 @@ namespace LudyCakeShop.Services
 
         public string CreateOrder(Order order)
         {
-            // TODO: check product quantity count if enough for each orderItem ItemQuantity
-            //TODO: compute subTotal, saleTotal, and GST
             order.OrderStatus = OrderStatus.SUBMITTED;
             order.OrderID = Guid.NewGuid().ToString();
             ordersManager.CreateOrder(order);
@@ -35,7 +33,6 @@ namespace LudyCakeShop.Services
 
         public bool UpdateOrder(string orderID, Order order)
         {
-            // TODO: check product quantity count if enough for each orderItem ItemQuantity
             return ordersManager.UpdateOrder(orderID, order);
         }
 
