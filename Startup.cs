@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using System.Text;
+using LudyCakeShop.Middleware;
 
 namespace LudyCakeShop
 {
@@ -105,6 +106,7 @@ namespace LudyCakeShop
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware(typeof(ExceptionHandlerMiddleware));
             app.UseHttpsRedirection();
 
             app.UseCors("_allowedOrigins");
