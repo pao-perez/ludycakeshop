@@ -86,7 +86,7 @@ namespace LudyCakeShop
                     };
                 });
             services.AddRouting(options => options.LowercaseUrls = true);
-            services.AddControllers().AddNewtonsoftJson();
+            services.AddControllers();
             services.AddCors(options =>
             {
                 options.AddPolicy("_allowedOrigins", policy =>
