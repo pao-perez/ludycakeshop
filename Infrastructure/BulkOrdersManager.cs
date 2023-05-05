@@ -30,7 +30,7 @@ namespace LudyCakeShop.Infrastructure
             IEnumerable<OrderItem> bulkOrderItems = GetBulkOrderItems();
             foreach (BulkOrder bulkOrder in resultBulkOrders)
             {
-                bulkOrder.OrderItems = bulkOrderItems.Where(bulkOrderItem => bulkOrderItem.OrderID == bulkOrder.OrderID);
+                bulkOrder.OrderItems = bulkOrderItems.Where(bulkOrderItem => bulkOrderItem.OrderID.Equals(bulkOrder.OrderID));
                 bulkOrders.Add(bulkOrder);
             }
 

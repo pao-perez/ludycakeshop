@@ -30,7 +30,7 @@ namespace LudyCakeShop.Infrastructure
             IEnumerable<OrderItem> orderItems = GetOrderItems();
             foreach (Order order in resultOrders)
             {
-                order.OrderItems = orderItems.Where(orderItem => orderItem.OrderID == order.OrderID);
+                order.OrderItems = orderItems.Where(orderItem => orderItem.OrderID.Equals(order.OrderID));
                 orders.Add(order);
             }
 
@@ -55,7 +55,7 @@ namespace LudyCakeShop.Infrastructure
             IEnumerable<OrderItem> orderItems = GetOrderItems();
             foreach (Order order in resultOrders)
             {
-                order.OrderItems = orderItems.Where(orderItem => orderItem.OrderID == order.OrderID);
+                order.OrderItems = orderItems.Where(orderItem => orderItem.OrderID.Equals(order.OrderID));
                 orders.Add(order);
             }
 
