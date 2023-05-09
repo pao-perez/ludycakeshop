@@ -8,6 +8,11 @@ using LudyCakeShop.Domain;
 
 namespace LudyCakeShop.Infrastructure
 {
+    /**
+     * Built as a utility convenience for our courses at school which repeatedly
+     * required using ADO.NET and stored procedures.
+     * This has evolved and improved upon since.
+     */
     public class SQLManager : ISQLManager
     {
         private readonly SQLConfiguration _sqlConfig;
@@ -66,13 +71,19 @@ namespace LudyCakeShop.Infrastructure
 
         private static void SetObjectProperties<T>(SqlDataReader dataReader, List<PropertyInfo> props, T obj)
         {
+            // We don't expect a lot of table columns from all tables, only a few table row cell
             for (int index = 0; index < dataReader.FieldCount; index++)
             {
                 PropertyInfo storedProp = props[index];
-                var val = dataReader[index];
-                if (storedProp != null && val != DBNull.Value)
+                if (storedProp == null)
                 {
-                    storedProp.SetValue(obj, val);
+                    continue;
+                }
+                Action<T, object> setterDelegate = PropertyManager<T>.GetOrCreateSetter(storedProp);
+                object val = dataReader[index];
+                if (val != DBNull.Value)
+                {
+                    setterDelegate(obj, val);
                 }
             }
         }
@@ -81,30 +92,38 @@ namespace LudyCakeShop.Infrastructure
         {
             SqlConnection sqlConnection = new();
             sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
-            sqlConnection.Open();
+            SqlDataReader dataReader = null;
+            T obj;
 
-            SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
-
-            foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
+            try
             {
-                command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
+                sqlConnection.Open();
+                SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
+
+                foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
+                {
+                    command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
+                }
+
+                dataReader = command.ExecuteReader();
+
+                if (!dataReader.HasRows)
+                {
+                    return default;
+                }
+                Func<T> constructorDelegate = PropertyManager<T>.GetOrCreateConstructor(datasourceParameter.ClassType);
+                obj = constructorDelegate();
+                List<PropertyInfo> props = GetPropertyFields(dataReader, datasourceParameter);
+                while (dataReader.Read())
+                {
+                    SetObjectProperties(dataReader, props, obj);
+                }
             }
-
-            SqlDataReader dataReader = command.ExecuteReader();
-
-            if (!dataReader.HasRows)
+            finally
             {
-                return default;
+                dataReader.Close();
+                sqlConnection.Close();
             }
-            T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
-            List<PropertyInfo> props = GetPropertyFields(dataReader, datasourceParameter);
-            while (dataReader.Read())
-            {
-                SetObjectProperties(dataReader, props, obj);
-            }
-
-            dataReader.Close();
-            sqlConnection.Close();
 
             return obj;
         }
@@ -113,31 +132,38 @@ namespace LudyCakeShop.Infrastructure
         {
             SqlConnection sqlConnection = new();
             sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
-            sqlConnection.Open();
-
-            SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
-
-            foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
-            {
-                command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
-            }
-
-            SqlDataReader dataReader = command.ExecuteReader();
-
+            SqlDataReader dataReader = null;
             List<T> objects = new();
-            if (dataReader.HasRows)
-            {
-                List<PropertyInfo> props = GetPropertyFields(dataReader, datasourceParameter);
-                while (dataReader.Read())
-                {
-                    T obj = (T)Activator.CreateInstance(null, datasourceParameter.ClassType.FullName).Unwrap();
-                    SetObjectProperties(dataReader, props, obj);
-                    objects.Add(obj);
-                }
-            }
 
-            dataReader.Close();
-            sqlConnection.Close();
+            try
+            {
+                sqlConnection.Open();
+                SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure);
+
+                foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
+                {
+                    command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
+                }
+
+                dataReader = command.ExecuteReader();
+
+                if (dataReader.HasRows)
+                {
+                    List<PropertyInfo> props = GetPropertyFields(dataReader, datasourceParameter);
+                    Func<T> constructorDelegate = PropertyManager<T>.GetOrCreateConstructor(datasourceParameter.ClassType);
+                    while (dataReader.Read()) // iterate table rows
+                    {
+                        T obj = constructorDelegate();
+                        SetObjectProperties(dataReader, props, obj);
+                        objects.Add(obj);
+                    }
+                }
+            } 
+            finally
+            {
+                dataReader.Close();
+                sqlConnection.Close();
+            }
 
             return objects;
         }
@@ -147,23 +173,25 @@ namespace LudyCakeShop.Infrastructure
             bool success = false;
             SqlConnection sqlConnection = new();
             sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
-            sqlConnection.Open();
-            SqlTransaction sqlDatasourceTransaction = sqlConnection.BeginTransaction();
-
-            IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
-            {
-                SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
-
-                foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
-                {
-                    command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
-                }
-
-                return command;
-            });
+            SqlTransaction sqlDatasourceTransaction = null;
 
             try
             {
+                sqlConnection.Open();
+                sqlDatasourceTransaction = sqlConnection.BeginTransaction();
+
+                IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
+                {
+                    SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+
+                    foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
+                    {
+                        command.Parameters.Add(CreateSqlCommandInputParameter(storedProcedureParameter.ParameterName, storedProcedureParameter.ParameterSqlDbType, storedProcedureParameter.ParameterValue));
+                    }
+
+                    return command;
+                });
+
                 foreach (SqlCommand command in sqlCommands)
                 {
                     command.ExecuteNonQuery();
@@ -189,13 +217,18 @@ namespace LudyCakeShop.Infrastructure
             bool success;
             SqlConnection sqlConnection = new();
             sqlConnection.ConnectionString = _sqlConfig.ConnectionString;
-            sqlConnection.Open();
 
-            SqlCommand command = CreateSqlCommand(sqlConnection, storedProcedure);
+            try
+            {
+                sqlConnection.Open();
+                SqlCommand command = CreateSqlCommand(sqlConnection, storedProcedure);
+                success = command.ExecuteNonQuery() > 0;
+            }
+            finally
+            {
+                sqlConnection.Close();
+            }
 
-            success = command.ExecuteNonQuery() > 0;
-
-            sqlConnection.Close();
             return success;
         }
 
