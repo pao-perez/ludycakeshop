@@ -1,2 +1,2 @@
 ﻿# aspnetcore-adonet-sqlserver
-A web api built for Ludy's Cake Shop as part of a Capstone project.
+ASP.NET Core Web API for Ludy's Cake Shop as part of a Capstone project.
