@@ -32,12 +32,9 @@ namespace LudyCakeShop.Infrastructure
             return command;
         }
 
-        private static SqlCommand CreateSqlCommand(SqlConnection datasourceConnection, string storedProcedure, SqlTransaction sqlTransaction)
+        private static SqlCommand CreateSqlCommandWithTransaction(SqlConnection datasourceConnection, string storedProcedure, SqlTransaction sqlTransaction)
         {
-            SqlCommand command = new();
-            command.Connection = datasourceConnection;
-            command.CommandType = CommandType.StoredProcedure;
-            command.CommandText = storedProcedure;
+            SqlCommand command = CreateSqlCommand(datasourceConnection, storedProcedure);
             command.Transaction = sqlTransaction;
 
             return command;
@@ -182,7 +179,7 @@ namespace LudyCakeShop.Infrastructure
 
                 IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
                 {
-                    SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+                    SqlCommand command = CreateSqlCommandWithTransaction(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
 
                     foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
                     {
@@ -242,7 +239,7 @@ namespace LudyCakeShop.Infrastructure
 
             IEnumerable<SqlCommand> sqlCommands = ((List<DatasourceParameter>)datasourceParameters).Select(datasourceParameter =>
             {
-                SqlCommand command = CreateSqlCommand(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
+                SqlCommand command = CreateSqlCommandWithTransaction(sqlConnection, datasourceParameter.StoredProcedure, sqlDatasourceTransaction);
 
                 foreach (StoredProcedureParameter storedProcedureParameter in datasourceParameter.StoredProcedureParameters)
                 {
