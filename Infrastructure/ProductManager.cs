@@ -43,7 +43,7 @@ namespace LudyCakeShop.Infrastructure
         {
             List<DatasourceParameter> datasourceParameters = new();
 
-            var productID = Guid.NewGuid().ToString();
+            string productID = Guid.NewGuid().ToString();
             List<StoredProcedureParameter> storedProcedureParameters = new();
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductID", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = productID });
             storedProcedureParameters.Add(new StoredProcedureParameter() { ParameterName = "@ProductName", ParameterSqlDbType = SqlDbType.VarChar, ParameterValue = product.ProductName });

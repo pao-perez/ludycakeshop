@@ -1,6 +1,7 @@
 ﻿using LudyCakeShop.Domain;
 using MailKit.Net.Smtp;
 using MimeKit;
+using MimeKit.Text;
 
 namespace LudyCakeShop.Infrastructure
 {
@@ -15,23 +16,24 @@ namespace LudyCakeShop.Infrastructure
 
         public void SendEmail(EmailMessage message)
         {
-            var emailMessage = ComposeEmail(message);
+            MimeMessage emailMessage = ComposeEmail(message);
             SendEmail(emailMessage);
         }
 
         private MimeMessage ComposeEmail(EmailMessage message)
         {
-            var emailMessage = new MimeMessage();
+            MimeMessage emailMessage = new();
             emailMessage.From.Add(new MailboxAddress(_emailConfig.FromDisplay, _emailConfig.From));
             emailMessage.To.Add(new MailboxAddress(_emailConfig.To, _emailConfig.To));
             emailMessage.Subject = message.Subject;
-            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message.Content };
+            emailMessage.Body = new TextPart(TextFormat.Text) { Text = message.Content };
+
             return emailMessage;
         }
 
         private void SendEmail(MimeMessage mailMessage)
         {
-            using var client = new SmtpClient();
+            using SmtpClient client = new();
             try
             {
                 client.Connect(_emailConfig.SmtpServer, _emailConfig.Port, true);

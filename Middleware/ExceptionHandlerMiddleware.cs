@@ -12,7 +12,7 @@ namespace LudyCakeShop.Middleware
         private readonly RequestDelegate _next;
         public ExceptionHandlerMiddleware(RequestDelegate next)
         {
-            _next = next;
+            this._next = next;
         }
         public async Task Invoke(HttpContext context)
         {
@@ -29,6 +29,7 @@ namespace LudyCakeShop.Middleware
         private static Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             // TODO: Log exception ex.StackTrace
+            // TODO: Send error notif to Email
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return context.Response.WriteAsync(
                 JsonSerializer.Serialize(

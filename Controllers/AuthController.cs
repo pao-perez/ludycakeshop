@@ -42,10 +42,10 @@ namespace LudyCakeShop.Controllers
 
             if (userAccount.Username.Equals(storedUserAccount.Username) && userAccount.Password.Equals(storedUserAccount.Password))
             {
-                var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authConfig.SigningKeySecret));
-                var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+                SymmetricSecurityKey secretKey = new(Encoding.UTF8.GetBytes(_authConfig.SigningKeySecret));
+                SigningCredentials signingCredentials = new(secretKey, SecurityAlgorithms.HmacSha256);
 
-                var tokenOptions = new JwtSecurityToken(
+                JwtSecurityToken tokenOptions = new(
                         issuer: _authConfig.ValidIssuer,
                         audience: _authConfig.ValidAudience,
                         claims: new List<Claim>(),
