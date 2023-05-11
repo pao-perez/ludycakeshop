@@ -1,4 +1,5 @@
-﻿using LudyCakeShop.Domain;
+﻿using LudyCakeShop.Core.Domain.Data;
+using LudyCakeShop.Core.Infrastructure;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;

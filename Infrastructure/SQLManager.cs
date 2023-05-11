@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Linq;
-using LudyCakeShop.Domain;
+using LudyCakeShop.Core.Domain.Config;
+using LudyCakeShop.Core.Infrastructure;
+using LudyCakeShop.Core.Domain.Data;
 
 namespace LudyCakeShop.Infrastructure
 {
@@ -68,7 +70,7 @@ namespace LudyCakeShop.Infrastructure
 
         private static void SetObjectProperties<T>(SqlDataReader dataReader, List<PropertyInfo> props, T obj)
         {
-            // We don't expect a lot of table columns from all tables, only a few table row cell
+            // We don't expect a lot of table columns from all tables, only a few table col cell
             for (int index = 0; index < dataReader.FieldCount; index++)
             {
                 PropertyInfo storedProp = props[index];

@@ -1,5 +1,5 @@
-using LudyCakeShop.Domain;
-using LudyCakeShop.Services;
+using LudyCakeShop.Core.Domain.Config;
+using LudyCakeShop.Core.Services;
 using LudyCakeShop.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +10,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using System.IO;
 using System.Text;
-using LudyCakeShop.Middleware;
+using LudyCakeShop.Web.Middleware;
+using LudyCakeShop.Core.Infrastructure;
 
 namespace LudyCakeShop
 {

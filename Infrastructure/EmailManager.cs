@@ -1,4 +1,6 @@
-﻿using LudyCakeShop.Domain;
+﻿using LudyCakeShop.Core.Domain.Config;
+using LudyCakeShop.Core.Domain.Notification;
+using LudyCakeShop.Core.Infrastructure;
 using MailKit.Net.Smtp;
 using MimeKit;
 using MimeKit.Text;
